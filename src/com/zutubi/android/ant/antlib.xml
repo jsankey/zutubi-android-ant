@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<antlib xmlns:current="ant:current">
+	<taskdef name="setversion" classname="com.zutubi.android.ant.SetVersionTask"/>
+</antlib>
