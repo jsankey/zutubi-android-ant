@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!--
+********************************************************************************
+* Ant Script Library - Java reports module 
+* Contains ant targets related to the reports on java code
+* Module property prefix: "java-report"
+********************************************************************************
+* Copyright 2009 Joe Schmetzer
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+********************************************************************************
+ -->
+<project name="asl-java-report">
+    <dirname property="java-report.basedir" file="${ant.file.asl-java-report}"/>
+    <import file="${java-report.basedir}/asl-java-build.xml"/>
+    <import file="${java-report.basedir}/asl-java-test.xml"/>
+
+    <!-- ***********************************************************************
+    * Default values for java-report properties.
+    ************************************************************************ -->
+    <property name="java-report.report-dir"             location="${common.dist-dir}/reports"/>
+    <property name="java-report.javadoc-dir"            location="${java-report.report-dir}/javadoc"/>
+    <property name="java-report.javadoc-window-title"   value="${ant.project.name}"/>
+    <property name="java-report.test-dir"               location="${java-report.report-dir}/test"/>
+    <property name="java-report.coverage-dir"           location="${java-report.report-dir}/coverage"/>
+    <property name="java-report.pmd-dir"                location="${java-report.report-dir}/pmd"/>
+    <property name="java-report.pmd-homedir"            location="${java-report.basedir}/lib/pmd"/>
+    <property name="java-report.pmd-libdir"             location="${java-report.pmd-homedir}/lib"/>
+    <property name="java-report.cpd-dir"                location="${java-report.report-dir}/cpd"/>
+    <property name="java-report.cpd-data-dir"           location="${common.target-dir}/cpd-data"/>
+    <property name="java-report.cpd-data-file"          location="${java-report.cpd-data-dir}/cpd-data.xml"/>
+    <property name="java-report.cpd-minimum-token-count" value="75"/>
+    <property name="java-report.cpd-stylesheet"         location="${java-report.pmd-homedir}/etc/xslt/cpdhtml.xslt"/>
+    <property name="java-report.checkstyle-dir"         location="${java-report.report-dir}/checkstyle"/>
+    <property name="java-report.checkstyle-libdir"      location="${java-report.basedir}/lib/checkstyle"/>
+    <property name="java-report.checkstyle-config-file" location="${java-report.checkstyle-libdir}/config/sun_checks.xml"/>
+    <property name="java-report.checkstyle-data-dir"    location="${common.target-dir}/checkstyle-data"/>
+    <property name="java-report.checkstyle-data-file"   location="${java-report.checkstyle-data-dir}/checkstyle-data.xml"/>
+    <property name="java-report.checkstyle-stylesheet"  location="${java-report.checkstyle-libdir}/xsl/checkstyle-noframes.xsl"/>
+    <property name="java-report.jdepend-data-dir"       location="${common.target-dir}/jdepend-data"/>
+    <property name="java-report.jdepend-dir"            location="${java-report.report-dir}/jdepend"/>
+    <property name="java-report.findbugs-home"          location="${java-report.basedir}/lib/findbugs"/>
+    <!--
+    <property name="java-report.findbugs-failbuild"     value="true"/>
+    -->
+    <property name="java-report.findbugs-libdir"        location="${java-report.findbugs-home}/lib"/>
+    <property name="java-report.findbugs-data-dir"      location="${common.target-dir}/findbugs-data"/>
+    <property name="java-report.findbugs-data-file"     location="${java-report.findbugs-data-dir}/findbugs.xml"/>
+    <property name="java-report.findbugs-stylesheet"    location="${java-report.findbugs-home}/src/xsl/default.xsl"/>
+    <property name="java-report.findbugs-dir"           location="${java-report.report-dir}/findbugs"/>
+    <property name="java-report.findbugs-report-file"   location="${java-report.findbugs-dir}/index.html"/>
+    <property name="java-report.findbugs-jvmargs"       value="-Xmx512m"/>
+
+    <!-- ***********************************************************************
+    * target: report-all
+    ************************************************************************ -->
+    <target name="report-all"
+            depends="report-javadoc, report-tests, report-cobertura, report-jdepend, report-pmd, report-cpd, report-checkstyle, report-findbugs" 
+            description="Runs all reports"/>
+
+    <!-- ***********************************************************************
+    * target: report-javadoc
+    ************************************************************************ -->
+    <target name="report-javadoc" depends="-init-time, -init-classpath"
+            description="Creates javadoc for the source code">
+        <property name="java-report.javadoc-doc-title"   value="${java-report.javadoc-window-title} - ${common.timestamp-long}"/>
+
+        <mkdir dir="${java-report.javadoc-dir}"/>
+        <javadoc
+                sourcepath="${java-build.src-dir}"
+                packagenames="*"
+                destdir="${java-report.javadoc-dir}"
+                author="true"
+                version="true"
+                use="true"
+                verbose="false"
+                linksource="true"
+                source="${java-build.source-ver}"
+                windowtitle="${java-report.javadoc-window-title}"
+                doctitle="${java-report.javadoc-doc-title}">
+            <classpath refid="java-build.classpath"/>
+            <link href="http://java.sun.com/javase/6/docs/api/"
+                    offline="true"
+                    packagelistLoc="${java-report.basedir}/lib/javadoc/jre-1.6"/>
+        </javadoc>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: report-tests
+    ************************************************************************ -->
+    <target name="report-tests"
+            description="Creates a test report">
+        <mkdir dir="${java-report.test-dir}"/>
+        
+        <junitreport todir="${java-report.test-dir}">
+            <fileset dir="${java-test.test-data-dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${java-report.test-dir}"/>
+        </junitreport>
+    </target>
+    
+
+    <!-- ***********************************************************************
+    * target: report-cobertura
+    ************************************************************************ -->
+    <target name="report-cobertura" depends="-test-init-cobertura"
+            description="Generates a test coverage report">
+    
+        <cobertura-report
+            datafile="${java-test.instrumented-datafile}"
+            srcdir="${java-build.src-dir}"
+            destdir="${java-report.coverage-dir}"/>
+    
+    </target>
+
+    <!-- ***********************************************************************
+    * target: report-pmd
+    ************************************************************************ -->
+    <target name="report-pmd" depends="-report-init-pmd"
+            description="Generates the code quality report from PMD">
+        <mkdir dir="${java-report.pmd-dir}"/>
+        <pmd shortFilenames="true">
+            <ruleset>rulesets/favorites.xml</ruleset>
+            <ruleset>basic</ruleset>
+            <formatter type="html"
+                       toFile="${java-report.pmd-dir}/index.html"/>
+            <fileset dir="${java-build.src-dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </pmd>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -report-init-pmd
+    ************************************************************************ -->
+    <target name="-report-init-pmd">
+        <asl-check-libs libname="pmd" jar="${java-report.pmd-libdir}/pmd.jar"/>
+        
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+            <classpath>
+                <fileset dir="${java-report.pmd-libdir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: report-cpd
+    ************************************************************************ -->
+    <target name="report-cpd" depends="-report-cpd-run, -report-cpd-xslt"
+            description="Generates the copy-paste detection report from PMD"/>
+    
+    
+    <!-- ***********************************************************************
+    * target: -report-cpd-run
+    ************************************************************************ -->
+    <target name="-report-cpd-run" depends="-report-init-cpd">
+        <mkdir dir="${java-report.cpd-data-dir}"/>
+        <cpd   minimumTokenCount="${java-report.cpd-minimum-token-count}"
+               outputFile="${java-report.cpd-data-file}"
+               format="xml"
+               encoding="UTF-8">
+            <fileset dir="${java-build.src-dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </cpd>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -report-cpd-xslt
+    ************************************************************************ -->
+    <target name="-report-cpd-xslt">
+        <mkdir dir="${java-report.cpd-dir}"/>
+        <xslt
+            in="${java-report.cpd-data-file}"
+            out="${java-report.cpd-dir}/index.html"
+            style="${java-report.cpd-stylesheet}"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -report-init-cpd
+    ************************************************************************ -->
+    <target name="-report-init-cpd">
+        <asl-check-libs libname="pmd" jar="${java-report.pmd-libdir}/pmd.jar"/>
+        
+        <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask">
+            <classpath>
+                <fileset dir="${java-report.pmd-libdir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: report-findbugs
+    ************************************************************************ -->
+    <target name="report-findbugs"
+            depends="-report-findbugs-run, -report-findbugs-xslt, -report-findbugs-checkfailure"
+            description="Generates the code quality report from FindBugs"/>
+
+    <!-- ***********************************************************************
+    * target: report-findbugs
+    ************************************************************************ -->
+    <target name="-report-findbugs-checkfailure" if="java-report.findbugs-failbuild">
+        <fail if="java-report.findbugs-warnings"
+            message="FindBugs warnings - please review the FindBugs report"/>
+    </target>
+    
+    
+    <!-- ***********************************************************************
+    * target: -report-init-findbugs
+    ************************************************************************ -->
+    <target name="-report-init-findbugs">
+        <asl-check-libs libname="findbugs" jar="${java-report.findbugs-libdir}/findbugs.jar"/>
+        
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+            <classpath>
+                <fileset dir="${java-report.findbugs-libdir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+    </target>  
+    
+    <!-- ***********************************************************************
+    * target: -report-findbugs-run
+    ************************************************************************ -->
+    <target name="-report-findbugs-run" depends="-report-init-findbugs, jar">
+        <mkdir dir="${java-report.findbugs-data-dir}"/>
+        <findbugs home="${java-report.findbugs-home}"
+                  projectName="${ant.project.name}"
+                  warningsProperty="java-report.findbugs-warnings"
+                  output="xml:withMessages"
+                  outputFile="${java-report.findbugs-data-file}"
+                  jvmargs="${java-report.findbugs-jvmargs}">
+            <class location="${java-build.jar-file}"/>
+            <auxClasspath refid="java-build.runtime-classpath"/>
+            <sourcePath path="${java-build.src-dir}"/>
+        </findbugs>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -report-findbugs-xslt
+    ************************************************************************ -->
+    <target name="-report-findbugs-xslt">
+        <mkdir dir="${java-report.findbugs-dir}"/>
+        <xslt
+            in="${java-report.findbugs-data-file}"
+            out="${java-report.findbugs-report-file}"
+            style="${java-report.findbugs-stylesheet}"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: report-checkstyle
+    ************************************************************************ -->
+    <target name="report-checkstyle"
+            depends="-report-checkstyle-run,-report-checkstyle-xslt"
+            description="Generates the code quality report from Checkstyle"/>
+        
+    <!-- ***********************************************************************
+    * target: -report-checkstyle-run
+    ************************************************************************ -->
+    <target name="-report-checkstyle-run" depends="-report-init-checkstyle">
+        <mkdir dir="${java-report.checkstyle-data-dir}"/>
+        <checkstyle config="${java-report.checkstyle-config-file}"
+                    failureProperty="checkstyle.failure"
+                    failOnViolation="false">
+            <formatter type="xml" tofile="${java-report.checkstyle-data-file}"/>
+            <fileset dir="${java-build.src-dir}" includes="**/*.java"/>
+        </checkstyle>
+    </target>
+        
+    <!-- ***********************************************************************
+    * target: -report-checkstyle-xslt
+    ************************************************************************ -->
+    <target name="-report-checkstyle-xslt">
+        <mkdir dir="${java-report.checkstyle-dir}"/>
+        <xslt
+            in="${java-report.checkstyle-data-file}"
+            out="${java-report.checkstyle-dir}/index.html"
+            style="${java-report.checkstyle-stylesheet}"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -report-init-checkstyle
+    ************************************************************************ -->
+    <target name="-report-init-checkstyle">
+        <asl-check-libs libname="checkstyle" jar="${java-report.checkstyle-libdir}/checkstyle.jar"/>
+        
+        <taskdef resource="checkstyletask.properties"
+                 classpath="${java-report.checkstyle-libdir}/checkstyle.jar"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: report-jdepend
+    ************************************************************************ -->
+    <target name="report-jdepend" depends="-report-jdepend-run, -report-jdepend-xslt"
+            description="Creates a package dependency report"/>
+	
+    <!-- ***********************************************************************
+    * target: -report-jdepend-run
+    ************************************************************************ -->
+	<target name="-report-jdepend-run" depends="compile">
+        <mkdir dir="${java-report.jdepend-data-dir}"/>
+        <jdepend outputfile="${java-report.jdepend-data-dir}/jdepend.xml" format="xml">
+            <exclude name="java.*"/>
+            <exclude name="javax.*"/>
+            <classespath>
+                <pathelement location="${java-build.classes-dir}"/>
+            </classespath>
+        </jdepend>
+	</target>
+    
+    <!-- ***********************************************************************
+    * target: -report-jdepend-xslt
+    ************************************************************************ -->
+	<target name="-report-jdepend-xslt">
+	    <mkdir dir="${java-report.jdepend-dir}"/>
+        <xslt basedir="${java-report.jdepend-data-dir}"
+               destdir="${java-report.jdepend-dir}"
+               includes="jdepend.xml"
+               style="${ant.home}/etc/jdepend.xsl"/>
+    </target>    
+    
+</project>

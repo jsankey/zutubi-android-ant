@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!--
+********************************************************************************
+* Ant Script Library - Java zip package module
+* Module that arranges the application jar, libraries and configuration file
+* ready for installation.
+* Module property prefix: "java-package"
+********************************************************************************
+* Copyright 2009 Joe Schmetzer
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+********************************************************************************
+ -->
+<project name="asl-java-package">
+    <dirname property="asl-java-package.basedir" file="${ant.file.asl-java-package}"/>
+    <import file="${asl-java-package.basedir}/asl-java-build.xml"/>
+
+    <!-- ***********************************************************************
+    * target: package
+    ************************************************************************ -->
+    <target name="package" depends="jar, -package-init, -package-jar, -package-libs, -package-config, -package-scripts, -package-zip"
+            description="Zips an application jar in deployable directory structure"/>
+
+    <!-- ***********************************************************************
+    * target: install
+    ************************************************************************ -->
+    <target name="install" depends="package, -init-install-dir"
+            description="Installs the packaged application to a user specified directory">
+        <unzip src="${java-package.zip-file}" dest="${install-dir}"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -init-install-dir
+    ************************************************************************ -->
+    <target name="-init-install-dir" unless="install-dir">
+        <echo message="Property 'install-dir' has not been defined, prompting..."/>
+        <input addproperty="install-dir">Enter the installation directory: </input>    
+    </target>
+
+    <!-- ***********************************************************************
+    * target: -package-init
+    ************************************************************************ -->
+    <target name="-package-init" depends="-package-init-version">
+        <property name="java-package.pkg-dir"           location="${common.target-dir}/package"/>
+        <property name="java-package.pkg-lib-dir"       location="${java-package.pkg-dir}/lib"/>
+        <property name="java-package.pkg-config-dir"    location="${java-package.pkg-dir}/config"/>
+        <property name="java-package.run-sh-name"       value="run.sh"/>
+        <property name="java-package.run-sh-file"       value="${java-package.pkg-dir}/${java-package.run-sh-name}"/>
+        <property name="java-package.run-cmd-name"      value="run.cmd"/>
+        <property name="java-package.run-cmd-file"      value="${java-package.pkg-dir}/${java-package.run-cmd-name}"/>
+        <property name="java-package.jvm-options"       value=""/>
+        <property name="java-package.package-version"   value="${release.version}"/>
+        <property name="java-package.zip-dir"           location="${common.dist-dir}"/>
+        <property name="java-package.zip-file"          location="${java-package.zip-dir}/${ant.project.name}-${java-package.package-version}.zip"/>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: -package-init
+    ************************************************************************ -->
+    <target name="-package-init-version" depends="-init-time" unless="release.version">
+        <property name="java-package.package-version" value="dev-${common.date-iso}"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -package-jar
+    ************************************************************************ -->
+    <target name="-package-jar">
+        <mkdir dir="${java-package.pkg-dir}"/>
+        <copy todir="${java-package.pkg-dir}" file="${java-build.jar-file}"/>
+    </target>
+        
+    <!-- ***********************************************************************
+    * target: -package-libs
+    ************************************************************************ -->
+    <target name="-package-libs" depends="-init-runtime-classpath">
+        <mkdir dir="${java-package.pkg-lib-dir}"/>
+        <copy todir="${java-package.pkg-lib-dir}" flatten="true">
+            <path refid="java-build.runtime-classpath"/>
+        </copy>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: -package-config
+    ************************************************************************ -->
+    <target name="-package-config"
+            depends="-package-config-check"
+            if="java-package.config-exists">
+        <property name="java-package.src-config-dir" location="config"/>
+        <mkdir dir="${java-package.pkg-config-dir}"/>
+        <copy todir="${java-package.pkg-config-dir}">
+            <fileset dir="${java-package.src-config-dir}"/>
+        </copy>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: -package-config-check
+    ************************************************************************ -->
+    <target name="-package-config-check">
+        <available file="${java-package.src-config-dir}"
+                   type="dir"
+                   property="java-package.config-exists"/>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: -package-scripts
+    ************************************************************************ -->
+    <target name="-package-scripts" depends="-package-scripts-cmd, -package-scripts-sh"/>
+    
+    <!-- ***********************************************************************
+    * target: -package-scripts-cmd
+    ************************************************************************ -->
+    <target name="-package-scripts-cmd">
+        <echo file="${java-package.run-cmd-file}">@echo off
+REM %~dp0 is name of current script under NT
+set JARDIR=%~dp0
+java ${java-package.jvm-options} -jar %JARDIR%${java-build.dist-filename} %*        
+        </echo>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -package-scripts-sh
+    ************************************************************************ -->
+    <target name="-package-scripts-sh">
+        <echo file="${java-package.run-sh-file}">#!/bin/sh
+JARDIR=`dirname "$0"`
+java ${java-package.jvm-options} -jar $JARDIR/${java-build.dist-filename} $@
+        </echo>
+        <chmod file="${java-package.run-sh-file}" perm="ugo+rx"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -package-zip
+    ************************************************************************ -->
+    <target name="-package-zip">
+        <mkdir dir="${java-package.zip-dir}" />
+        <zip destfile="${java-package.zip-file}">
+            <fileset dir="${java-package.pkg-dir}"/>
+        </zip>
+    </target>    
+    
+</project>

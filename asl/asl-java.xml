@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!--
+********************************************************************************
+* Ant Script Library - Java top level module 
+* Module that imports all the other java modules for a plain java build
+* Module property prefix: "java"
+********************************************************************************
+* Copyright 2009 Joe Schmetzer
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+********************************************************************************
+ -->
+<project name="asl-java">
+    <dirname property="asl-java.basedir" file="${ant.file.asl-java}"/>
+
+    <import file="${asl-java.basedir}/asl-java-build.xml"/>
+    <import file="${asl-java.basedir}/asl-java-test.xml"/>
+    <import file="${asl-java.basedir}/asl-java-report.xml"/>
+    <import file="${asl-java.basedir}/asl-java-package.xml"/>
+
+    <!-- ***********************************************************************
+    * target: smoketest
+    ************************************************************************ -->
+    <target name="smoketest" depends="clean, dist, test-run-unit, report-all, test-unit"
+            description="Runs smoketests on a clean compile"/>
+
+    <!-- ***********************************************************************
+    * target: fulltest
+    ************************************************************************ -->
+    <target name="fulltest" depends="clean, dist, test-run-unit, test-run-integration, report-all, test-all"
+            description="Runs full tests on a clean compile"/>
+</project>

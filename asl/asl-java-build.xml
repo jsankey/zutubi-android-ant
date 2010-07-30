@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!--
+********************************************************************************
+* Ant Script Library - Java build module 
+* Contains ant targets related to the compilation and packaging of Java code
+* Module property prefix: "java-build"
+********************************************************************************
+* Copyright 2009 Joe Schmetzer
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+********************************************************************************
+ -->
+<project name="asl-java-build">
+    <dirname property="java-build.basedir" file="${ant.file.asl-java-build}"/>
+    <import file="${java-build.basedir}/asl-common.xml"/>
+    
+    <!-- ***********************************************************************
+    * Default values for java-build properties.
+    ************************************************************************ -->
+    <property name="java-build.src-dir" 		location="src/main/java"/>
+    <property name="java-build.lib-dir" 		location="lib"/>
+    <property name="java-build.classes-dir" 	location="${common.target-dir}/classes"/>
+    <property name="java-build.dist-ext" 		value=".jar"/>
+    <property name="java-build.dist-filename" 	value="${ant.project.name}${java-build.dist-ext}"/>
+    <property name="java-build.dist-file" 		location="${common.dist-dir}/${java-build.dist-filename}"/>
+    <property name="java-build.jar-dir"         location="${common.dist-dir}"/>
+	<property name="java-build.jar-file"        location="${java-build.dist-file}"/>
+    <property name="java-build.source-ver" 		value="1.5"/>
+    <property name="java-build.target-ver" 		value="1.5"/>
+    <property name="java-build.debug" 			value="on"/>
+    
+    <!-- ***********************************************************************
+    * target: dist
+    ************************************************************************ -->
+    <target name="dist" depends="jar"
+    		description="Create a distributable for this java project"/>
+
+    <!-- ***********************************************************************
+    * target: jar
+    ************************************************************************ -->
+    <target name="jar" depends="compile, copy-resources, -init-time, -init-version, -init-jar-classpath, -init-jar-version-release, -init-jar-version-dev"
+    		description="Create a jar for this java project">
+    		
+        <mkdir dir="${java-build.jar-dir}"/>
+        
+        <property name="java-build.jar-title"       value="${ant.project.name}"/>
+        <property name="java-build.jar-compress"    value="true"/>
+        <property name="java-build.jar-vendor"      value=""/>
+        <property name="java-build.jar-build-id"    value="${user.name} @ ${common.timestamp}"/>
+        <property name="java-build.jar-main-class"  value=""/>
+        
+        <jar destfile="${java-build.jar-file}" compress="${java-build.jar-compress}">
+            <fileset dir="${java-build.classes-dir}" />
+            <manifest>
+                <attribute name="Implementation-Title"   value="${java-build.jar-title}"/>
+                <attribute name="Implementation-Version" value="${java-build.jar-version}"/>
+                <attribute name="Implementation-Vendor"	 value="${java-build.jar-vendor}"/>
+                <attribute name="Build-Id"               value="${java-build.jar-build-id}"/>
+                <attribute name="Main-Class"             value="${java-build.jar-main-class}"/>
+                <attribute name="Class-Path"             value="${java-build.jar-classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: compile
+    ************************************************************************ -->
+    <target name="compile" depends="generate,-init-classpath"
+            description="Compiles the java source">
+            
+        <mkdir dir="${java-build.classes-dir}"/>
+        <javac srcdir="${java-build.src-dir}"                
+         		destdir="${java-build.classes-dir}"
+                classpathref="java-build.classpath"
+                source="${java-build.source-ver}"
+                target="${java-build.target-ver}"
+               	debug="${java-build.debug}"
+                includeAntRuntime="false">
+        </javac>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: generate
+    ************************************************************************ -->
+    <target name="generate"
+    		description="Generates source code"/>
+
+    <!-- ***********************************************************************
+    * target: -init-classpath
+    ************************************************************************ -->
+    <target name="-init-classpath">
+    	<path id="java-build.classpath">
+    		<fileset dir="${java-build.lib-dir}">
+    			<include name="**/*.jar"/>
+    		</fileset>
+    	</path>
+    </target>
+
+    <!-- ***********************************************************************
+    * target: -init-runtime-classpath
+    ************************************************************************ -->
+    <target name="-init-runtime-classpath" depends="-init-classpath" unless="java-build.jar-classpath">
+        <path id="java-build.runtime-classpath">
+            <path refid="java-build.classpath"/>
+        </path>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: -init-jar-classpath
+    ************************************************************************ -->
+    <target name="-init-jar-classpath" depends="-init-runtime-classpath" unless="java-build.jar-classpath">
+        <pathconvert property="java-build.jar-lib-classpath"  
+                refid="java-build.runtime-classpath" pathsep=" ">
+            <chainedmapper>
+    			<flattenmapper/>
+	       		<globmapper from="*.jar" to="lib/*.jar"/>
+            </chainedmapper>
+        </pathconvert>
+        <property name="java-build.jar-classpath" value="config/ ${java-build.jar-lib-classpath}"/>
+    </target>
+	
+    <!-- ***********************************************************************
+    * target: -init-jar-version-release
+    ************************************************************************ -->
+    <target name="-init-jar-version-release" if="release.version">
+        <property name="java-build.jar-version" value="${release.version}" />
+	</target>
+    
+    <!-- ***********************************************************************
+    * target: -init-jar-version-dev
+    ************************************************************************ -->
+    <target name="-init-jar-version-dev" unless="release.version">
+        <property name="java-build.jar-version"  value="dev-${DSTAMP}${TSTAMP}"/>
+    </target>
+    
+    <!-- ***********************************************************************
+    * target: copy-resources
+    ************************************************************************ -->
+    <target name="copy-resources"
+            description="Copies resources in preparation to be packaged in jar">
+        <copy todir="${java-build.classes-dir}">
+            <fileset dir="${java-build.src-dir}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    
+</project>
