@@ -48,7 +48,7 @@
     <!-- ***********************************************************************
     * target: jar
     ************************************************************************ -->
-    <target name="jar" depends="compile, copy-resources, -init-time, -init-version, -init-jar-classpath, -init-jar-version-release, -init-jar-version-dev"
+    <target name="jar" depends="compile, copy-resources, -explode-third-party, -init-time, -init-version, -init-jar-classpath, -init-jar-version-release, -init-jar-version-dev"
     		description="Create a jar for this java project">
     		
         <mkdir dir="${java-build.jar-dir}"/>

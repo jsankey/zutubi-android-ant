@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.zutubi.android.example"
+	android:versionCode="1" android:versionName="1.0">
+	    <application android:icon="@drawable/icon" android:label="@string/app_name" android:name=".ExampleApplication">
+        <activity android:name=".ExampleActivity" android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+		<!-- Ugly formatting: we want to ensure it is preserved. -->
+          <activity android:name="Preferences"/>
+      <activity android:name="AnotherActivity"></activity>
+    </application>
+
+	  <!-- This comment should be preserved, along with the odd whitespace around it -->
+	  
+	  
+    <uses-sdk android:minSdkVersion="3" />
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+</manifest>

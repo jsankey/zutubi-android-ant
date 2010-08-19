@@ -29,12 +29,10 @@
 
     <!-- Item 6 - Avoid finalizers -->
     <!-- this will not find violations that contain linebreaks -->
-    <!--
     <module name="GenericIllegalRegexp">
       <property name="format"
                 value="((public)|(protected))\s+void\s+finalize\(\s*\)"/>
     </module>
-    -->
 
     <!-- Item 8 - Always override hashCode when you override equals -->
     <module name="EqualsHashCode"/>
@@ -69,17 +67,15 @@
     <!-- no rfe yet -->
 
     <!-- Item 28 - Write doc comments for all exposed API elements -->
-    <!--
     <module name="JavadocType">
       <property name="scope" value="protected"/>
     </module>
-    <module name="JavadocMethod">
+    <module name="JavadocMethod"> <!-- also covers Item 44 -->
       <property name="scope" value="protected"/>
     </module>
     <module name="JavadocVariable">
       <property name="scope" value="protected"/>
     </module>
-    -->
 
     <!-- Item 29 - Minimize the scope of local variables -->
     <!-- no rfe yet -->
