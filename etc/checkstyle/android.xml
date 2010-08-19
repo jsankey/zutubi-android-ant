@@ -4,7 +4,7 @@
      http://knol.google.com/k/fred-grott/checkstyle-for-android
 -->
 <module name="Checker">
-  <property name="severity" value="warning"/>
+  <property name="severity" value="error"/>
   <module name="TreeWalker">
     <module name="JavadocMethod">
         <property name="scope" value="public"/>
