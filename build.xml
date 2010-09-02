@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="zutubi-android-ant" default="dist">
+    <property name="version" value="dev"/>
+
     <property name="java-build.src-dir" location="src"/>
     <property name="java-test.src-dir" location="test"/>
     <property name="java-build.lib-dir" location="libs"/>
-	<property name="java-report.checkstyle-config-file" value="etc/checkstyle/android.xml"/>
-	
-	<property name="asl.dir" value="asl"/>
+    <property name="java-build.dist-filename" value="${ant.project.name}-${version}.jar"/>
 
-	<target name="-explode-third-party">
-	    <property name="explode-dir" location="${common.target-dir}/explode"/>
-		<delete dir="${explode-dir}"/>
-		<mkdir dir="${explode-dir}"/>
-		<unjar src="${java-build.lib-dir}/decentxml-1.2.jar" dest="${explode-dir}"/>
-		<copy todir="${java-build.classes-dir}">
-		    <fileset dir="${explode-dir}">
-			    <exclude name="META-INF/**"/>
-		    </fileset>
-		</copy>
-	</target>
-	
+    <property name="java-report.checkstyle-config-file" value="etc/checkstyle/android.xml"/>
+    
+    <property name="asl.dir" value="asl"/>
+
+    <target name="-explode-third-party">
+        <property name="explode-dir" location="${common.target-dir}/explode"/>
+        <delete dir="${explode-dir}"/>
+        <mkdir dir="${explode-dir}"/>
+        <unjar src="${java-build.lib-dir}/decentxml-1.2.jar" dest="${explode-dir}"/>
+        <copy todir="${java-build.classes-dir}">
+            <fileset dir="${explode-dir}">
+                <exclude name="META-INF/**"/>
+            </fileset>
+        </copy>
+    </target>
+    
     <import file="${asl.dir}/asl-java-build.xml"/>
     <import file="${asl.dir}/asl-java-test.xml"/>
     <import file="${asl.dir}/asl-java-report.xml"/>
-	
-	<!-- Override the default checkstyle target to also check test classes. -->
+    
+    <!-- Override the default checkstyle target to also check test classes. -->
     <target name="report-checkstyle"
             depends="-report-checkstyle-run,-report-checkstyle-xslt,-report-checkstyle-check"
             description="Generates the code quality report from Checkstyle"/>
@@ -32,18 +36,18 @@
         <mkdir dir="${java-report.checkstyle-data-dir}"/>
         <checkstyle config="${java-report.checkstyle-config-file}"
                     failureProperty="checkstyle.failure"
-        			failOnViolation="false">
+                    failOnViolation="false">
             <formatter type="xml" tofile="${java-report.checkstyle-data-file}"/>
             <fileset dir="${java-build.src-dir}" includes="**/*.java"/>
             <fileset dir="${java-test.src-dir}" includes="**/*.java"/>
         </checkstyle>
     </target>
 
-	<target name="-report-checkstyle-check">
-    	<fail if="checkstyle.failure" message="Checkstyle failed."/>
-	</target>
-	
-	<!-- Override the default report-all target to select just the reports we want. -->
+    <target name="-report-checkstyle-check">
+        <fail if="checkstyle.failure" message="Checkstyle failed."/>
+    </target>
+    
+    <!-- Override the default report-all target to select just the reports we want. -->
     <target name="report-all"
             depends="report-javadoc, report-tests, report-cobertura, report-pmd, report-checkstyle" 
             description="Runs all reports"/>
