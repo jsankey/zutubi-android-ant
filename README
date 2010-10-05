@@ -1,0 +1,114 @@
+Zutubi Android Ant Tasks
+========================
+
+Introduction
+------------
+
+The zutubi-android-ant project provides a collection of Ant tasks that
+are useful for Android (http://www.android.com/) projects.  These
+tasks are intended to complement the Ant support provided by the
+Android SDK.
+
+Available Tasks
+---------------
+
+Currently, zutubi-android-ant contains two tasks:
+
+* setversion
+
+A task that can update the versionName and/or versionCode attributes
+of an android manifest XML file, leaving the rest of the file
+unchanged.
+
+Attributes (all optional):
+code: the versionCode to set (default: leave unchanged)
+name: the versionName to set (default: leave unchanged)
+manifestfile: path of the manifest file (default: AndroidManifest.xml)
+
+* bumpversion
+
+A task to increment the versionCode attribute of a manifest file, and
+optionally the versionName attribute (if it uses a dotted-decimal
+format).
+
+Attributes (all optional):
+bumpname: if true, the last element of the version name will also be
+          incremented (default: false)
+manifestfile: path of the manifest file (default: AndroidManifest.xml)
+
+Obtaining the Jar
+-----------------
+
+You can download the latest zutubi-android-ant release from the GitHub
+downloads page:
+
+http://github.com/jsankey/zutubi-android-ant/downloads
+
+You can also grab the latest directly from the build server:
+
+http://pulse.zutubi.com/browse/projects/zutubi-android-ant-release/builds/success/
+
+(Click on "jar" in the "featured artifacts" table on the right of the
+page.)
+
+Using the Tasks
+---------------
+
+To use zutubi-android-ant in your projects, you should add the jar
+file to your source tree, then use the taskdef Ant task to import the
+tasks.  The recommended way to do this is to define an XML namespace
+for the tasks, and reference the antlib.xml file provided in the jar.
+For example, you can define a namespace on the root element of your
+build file as follows:
+
+<project name="MyProject" xmlns:zaa="antlib:com.zutubi.android.ant">
+
+Then within this root element, add the following taskdef:
+
+<taskdef uri="antlib:com.zutubi.android.ant"
+	 resource="com/zutubi/android/ant/antlib.xml"
+	 classpath="path/to/zutubi-android-ant.jar"/>
+
+With this namespace and taskdef in place, you are able to access the
+tasks using the "zaa:" namespace prefix.  For example, to use the
+setversion task in a versioned-release target:
+
+<target name="versioned-release">
+    <zaa:setversion code="3" name="0.3"/>
+    ...
+</target>
+
+See the examples/ subdirectory for simple Ant build files that
+illustrate the usage of each task (you will need to build the jar
+first to run them, see below).
+
+Building
+--------
+
+To build the task jar, use ant in the root directory of this source
+tree:
+
+$ ant jar
+
+More ant targets are available, for details run:
+
+$ ant -p
+
+The build uses the Ant Script Library (http://www.exubero.com/asl/)
+for those that wish to understand further.
+
+Contact
+-------
+
+If you have any thoughts, questions etc about the runner, you can
+contact me at:
+
+  jason@zutubi.com
+
+All feedback is welcome.
+
+License
+-------
+
+This code is licensed under the Apache License, Version 2.0.  See the
+LICENSE file for details.

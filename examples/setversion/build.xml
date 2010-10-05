@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="setversion sample" default="set" xmlns:zaa="antlib:com.zutubi.android.ant">
+    <taskdef uri="antlib:com.zutubi.android.ant" resource="com/zutubi/android/ant/antlib.xml" classpath="../../target/dist/zutubi-android-ant-dev.jar"/>
+
+    <target name="set">
+        <zaa:setversion code="10" name="1.0"/>
+    </target>
+</project>
+

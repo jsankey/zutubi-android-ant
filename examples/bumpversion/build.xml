@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bumpversion sample" default="bump" xmlns:zaa="antlib:com.zutubi.android.ant">
+    <taskdef uri="antlib:com.zutubi.android.ant" resource="com/zutubi/android/ant/antlib.xml" classpath="../../target/dist/zutubi-android-ant-dev.jar"/>
+
+    <target name="bump">
+        <zaa:bumpversion bumpname="true"/>
+    </target>
+</project>
+

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.zutubi.android.example"
+	android:versionCode="0" android:versionName="x.1">
+</manifest>
