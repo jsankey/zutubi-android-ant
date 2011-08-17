@@ -6,6 +6,17 @@ package com.zutubi.android.ant;
 public class SetVersionTask extends AbstractManifestUpdateTask {
     private String name = "";
     private String code = "";
+    private String debuggable = "";
+
+    /**
+     * Sets the new android:debuggable value.
+     *
+     * @param name the new debuggable value, may be empty or null to leave the
+     *             debuggable value unchanged
+     */
+    public void setDebuggable(final String debuggable) {
+        this.debuggable = debuggable;
+    }
 
     /**
      * Sets the new android:versionName value.
@@ -35,6 +46,10 @@ public class SetVersionTask extends AbstractManifestUpdateTask {
 
         if (Util.stringSet(code)) {
             manifest.setVersionCode(code);
+        }
+
+        if (Util.stringSet(debuggable)) {
+            manifest.setDebuggable(Boolean.valueOf(debuggable).booleanValue());
         }
     };
 }
