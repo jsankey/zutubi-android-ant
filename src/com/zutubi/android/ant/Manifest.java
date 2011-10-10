@@ -22,6 +22,10 @@ public class Manifest {
     private static final String ATTRIBUTE_VERSION_NAME = "android:versionName";
     private static final String ATTRIBUTE_VERSION_CODE = "android:versionCode";
     private static final String ATTRIBUTE_DEBUGGABLE = "android:debuggable";
+    private static final String ATTRIBUTE_ICON = "android:icon";
+    private static final String ATTRIBUTE_LABEL = "android:label";
+        	
+    private static final String ATTRIBUTE_PACKAGE = "package";
 
     private final Document document;
     private final Element manifestElement;
@@ -92,6 +96,24 @@ public class Manifest {
     public void setVersionCode(final String versionCode) {
         setAttributeValue(manifestElement, ATTRIBUTE_VERSION_CODE, versionCode);
     }
+    
+    /**
+     * Retrieves the package attribute value.
+     *
+     * @return the package attribute value
+     */
+    public String getPackage() {
+        return manifestElement.getAttributeValue(ATTRIBUTE_PACKAGE);
+    }
+
+    /**
+     * Sets the package attribute value
+     *
+     * @param package the new package attribute value to use.
+     */
+    public void setPackage(final String packageValue) {
+        setAttributeValue(manifestElement, ATTRIBUTE_PACKAGE, packageValue);
+    }
 
     /**
      * Retrieves the android:versionName.
@@ -110,6 +132,45 @@ public class Manifest {
      */
     public void setVersionName(final String versionName) {
         setAttributeValue(manifestElement, ATTRIBUTE_VERSION_NAME, versionName);
+    }
+
+
+    /**
+     * Retrieves the android:icon of the application node.
+     *
+     * @return the applicaton's icon
+     */
+    public String getIcon() {
+        return applicationElement.getAttributeValue(ATTRIBUTE_ICON);
+    }
+
+    /**
+     * Sets the android:icon of the application node, adding the attribute if it does not
+     * already exist.
+     *
+     * @param icon the new icon
+     */
+    public void setIcon(final String icon) {
+        setAttributeValue(applicationElement, ATTRIBUTE_ICON, icon);
+    }
+
+    /**
+     * Retrieves the android:label of the application's node.
+     *
+     * @return the applicaton's label
+     */
+    public String getLabel() {
+        return applicationElement.getAttributeValue(ATTRIBUTE_LABEL);
+    }
+
+    /**
+     * Sets the android:label of the application node, adding the attribute if it does not
+     * already exist.
+     *
+     * @param label the new label
+     */
+    public void setLabel(final String label) {
+        setAttributeValue(applicationElement, ATTRIBUTE_LABEL, label);
     }
 
     private void setAttributeValue(final Element element, final String name, final String value) {

@@ -7,6 +7,9 @@ public class SetVersionTask extends AbstractManifestUpdateTask {
     private String name = "";
     private String code = "";
     private String debuggable = "";
+    private String packageValue = "";
+    private String icon = "";
+    private String label = "";
 
     /**
      * Sets the new android:debuggable value.
@@ -38,18 +41,53 @@ public class SetVersionTask extends AbstractManifestUpdateTask {
         this.code = code;
     }
 
+    /**
+     * Sets the new package attribute value.
+     *
+     * @param packageValue the new package attribute value
+     */
+    public void setPackage(final String packageValue) {
+        this.packageValue = packageValue;
+    }
+    
+
+    /**
+     * Sets the new label attribute value.
+     *
+     * @param code the new label attribute value
+     */
+    public void setLabel(final String label) {
+        this.label = label;
+    }
+    
+    /**
+     * Sets the new icon attribute value.
+     *
+     * @param code the new icon attribute value
+     */
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
     @Override
     protected void updateManifest(final Manifest manifest) {
         if (Util.stringSet(name)) {
             manifest.setVersionName(name);
         }
-
         if (Util.stringSet(code)) {
             manifest.setVersionCode(code);
         }
-
+        if (Util.stringSet(packageValue)) {
+            manifest.setPackage(packageValue);
+        }
         if (Util.stringSet(debuggable)) {
             manifest.setDebuggable(Boolean.valueOf(debuggable).booleanValue());
+        }
+        if (Util.stringSet(label)) {
+            manifest.setLabel(label);
+        }
+        if (Util.stringSet(icon)) {
+            manifest.setIcon(icon);
         }
     };
 }
