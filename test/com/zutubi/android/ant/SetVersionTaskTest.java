@@ -11,8 +11,10 @@ import java.io.IOException;
 public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
     private static final String ORIGINAL_CODE = "1";
     private static final String ORIGINAL_NAME = "1.0";
+    private static final String ORIGINAL_DEBUGGABLE = "false";
     private static final String TEST_CODE = "8";
     private static final String TEST_NAME = "2.3";
+    private static final String TEST_DEBUGGABLE = "true";
 
     private static final String ORIGINAL_FILE = "original";
 
@@ -52,10 +54,12 @@ public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
     public void testEmptyManifestElement() throws ParseException {
         task.setCode(TEST_CODE);
         task.setName(TEST_NAME);
+        task.setDebuggable(TEST_DEBUGGABLE);
 
         final Manifest manifest = runTaskAndParseResult();
         assertEquals(TEST_CODE, manifest.getVersionCode());
         assertEquals(TEST_NAME, manifest.getVersionName());
+        assertEquals(TEST_DEBUGGABLE, manifest.getDebuggable());
     }
 
     @Test
@@ -63,6 +67,7 @@ public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
         final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
         assertEquals(ORIGINAL_CODE, manifest.getVersionCode());
         assertEquals(ORIGINAL_NAME, manifest.getVersionName());
+        assertEquals(ORIGINAL_DEBUGGABLE, manifest.getDebuggable());
     }
 
     @Test
@@ -72,6 +77,7 @@ public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
         final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
         assertEquals(ORIGINAL_CODE, manifest.getVersionCode());
         assertEquals(TEST_NAME, manifest.getVersionName());
+        assertEquals(ORIGINAL_DEBUGGABLE, manifest.getDebuggable());
     }
 
     @Test
@@ -81,16 +87,29 @@ public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
         final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
         assertEquals(TEST_CODE, manifest.getVersionCode());
         assertEquals(ORIGINAL_NAME, manifest.getVersionName());
+        assertEquals(ORIGINAL_DEBUGGABLE, manifest.getDebuggable());
     }
 
     @Test
-    public void testRewriteNameAndCode() throws ParseException {
+    public void testRewriteDebuggable() throws ParseException {
+        task.setDebuggable(TEST_DEBUGGABLE);
+
+        final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
+        assertEquals(ORIGINAL_CODE, manifest.getVersionCode());
+        assertEquals(ORIGINAL_NAME, manifest.getVersionName());
+        assertEquals(TEST_DEBUGGABLE, manifest.getDebuggable());
+    }
+
+    @Test
+    public void testRewriteNameAndCodeAndDebuggable() throws ParseException {
         task.setCode(TEST_CODE);
         task.setName(TEST_NAME);
+        task.setDebuggable(TEST_DEBUGGABLE);
 
         final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
         assertEquals(TEST_CODE, manifest.getVersionCode());
         assertEquals(TEST_NAME, manifest.getVersionName());
+        assertEquals(TEST_DEBUGGABLE, manifest.getDebuggable());
     }
 
     @Test

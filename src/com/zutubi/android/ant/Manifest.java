@@ -16,13 +16,20 @@ import java.io.IOException;
  * useful subset of its contents.
  */
 public class Manifest {
-    private static final String ELEMENT_MANIFEST = "manifest";
+	private static final String ELEMENT_MANIFEST = "manifest";
+	private static final String ELEMENT_APPLICATION = "application";
 
     private static final String ATTRIBUTE_VERSION_NAME = "android:versionName";
     private static final String ATTRIBUTE_VERSION_CODE = "android:versionCode";
+    private static final String ATTRIBUTE_DEBUGGABLE = "android:debuggable";
+    private static final String ATTRIBUTE_ICON = "android:icon";
+    private static final String ATTRIBUTE_LABEL = "android:label";
+        	
+    private static final String ATTRIBUTE_PACKAGE = "package";
 
     private final Document document;
     private final Element manifestElement;
+    private final Element applicationElement;
 
     /**
      * Creates a new manifest by parsing the given AndroidManifest.xml file.
@@ -34,8 +41,12 @@ public class Manifest {
         document = readDocument(inputFile);
         manifestElement = document.getRootElement();
         if (manifestElement == null || !manifestElement.getName().equals(ELEMENT_MANIFEST)) {
-            throw new ParseException("Unable to locate <manifest> element");
+            throw new ParseException("Unable to locate <"+ELEMENT_MANIFEST+"> element");
         }
+        applicationElement = manifestElement.getChild(ELEMENT_APPLICATION);
+        if (applicationElement == null) {
+            throw new ParseException("Unable to locate <"+ELEMENT_APPLICATION+"> element");
+        }  
     }
 
     private Document readDocument(final File file) throws ParseException {
@@ -45,6 +56,26 @@ public class Manifest {
         } catch (final Exception e) {
             throw new ParseException("Unable to parse manifest: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Retrieves the android:debuggable value.
+     * (aapt executable only works with first application node)
+     *
+     * @return the application debuggable value
+     */
+    public String getDebuggable() {
+        return applicationElement.getAttributeValue(ATTRIBUTE_DEBUGGABLE);
+    }
+
+    /**
+     * Sets the android:debuggable, adding the attribute if it does not
+     * already exist.
+     *
+     * @param debuggable the new application debuggable value
+     */
+    public void setDebuggable(final boolean debuggable) {
+        setAttributeValue(applicationElement, ATTRIBUTE_DEBUGGABLE, String.valueOf(debuggable));
     }
 
     /**
@@ -63,7 +94,25 @@ public class Manifest {
      * @param versionCode the new version code
      */
     public void setVersionCode(final String versionCode) {
-        setAttributeValue(ATTRIBUTE_VERSION_CODE, versionCode);
+        setAttributeValue(manifestElement, ATTRIBUTE_VERSION_CODE, versionCode);
+    }
+    
+    /**
+     * Retrieves the package attribute value.
+     *
+     * @return the package attribute value
+     */
+    public String getPackage() {
+        return manifestElement.getAttributeValue(ATTRIBUTE_PACKAGE);
+    }
+
+    /**
+     * Sets the package attribute value
+     *
+     * @param package the new package attribute value to use.
+     */
+    public void setPackage(final String packageValue) {
+        setAttributeValue(manifestElement, ATTRIBUTE_PACKAGE, packageValue);
     }
 
     /**
@@ -82,13 +131,52 @@ public class Manifest {
      * @param versionName the new version name
      */
     public void setVersionName(final String versionName) {
-        setAttributeValue(ATTRIBUTE_VERSION_NAME, versionName);
+        setAttributeValue(manifestElement, ATTRIBUTE_VERSION_NAME, versionName);
     }
 
-    private void setAttributeValue(final String name, final String value) {
-        final Attribute attribute = manifestElement.getAttribute(name);
+
+    /**
+     * Retrieves the android:icon of the application node.
+     *
+     * @return the applicaton's icon
+     */
+    public String getIcon() {
+        return applicationElement.getAttributeValue(ATTRIBUTE_ICON);
+    }
+
+    /**
+     * Sets the android:icon of the application node, adding the attribute if it does not
+     * already exist.
+     *
+     * @param icon the new icon
+     */
+    public void setIcon(final String icon) {
+        setAttributeValue(applicationElement, ATTRIBUTE_ICON, icon);
+    }
+
+    /**
+     * Retrieves the android:label of the application's node.
+     *
+     * @return the applicaton's label
+     */
+    public String getLabel() {
+        return applicationElement.getAttributeValue(ATTRIBUTE_LABEL);
+    }
+
+    /**
+     * Sets the android:label of the application node, adding the attribute if it does not
+     * already exist.
+     *
+     * @param label the new label
+     */
+    public void setLabel(final String label) {
+        setAttributeValue(applicationElement, ATTRIBUTE_LABEL, label);
+    }
+
+    private void setAttributeValue(final Element element, final String name, final String value) {
+        final Attribute attribute = element.getAttribute(name);
         if (attribute == null) {
-            manifestElement.addAttribute(new Attribute(name, value));
+            element.addAttribute(new Attribute(name, value));
         } else {
             attribute.setAttributeValue(value);
         }
@@ -104,6 +192,7 @@ public class Manifest {
     public void serialise(final File file) throws IOException {
         XMLWriter writer = null;
         try {
+        	System.out.println("Updating manifest "+file.getAbsolutePath());
             writer = new XMLWriter(new FileWriter(file));
             document.toXML(writer);
             writer.close();
