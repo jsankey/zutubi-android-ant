@@ -3,7 +3,7 @@ package com.zutubi.android.ant;
 
 /**
  * Exception raised on failure to parse a manifest.
- * 
+ *
  * @see Manifest
  */
 public class ParseException extends Exception {
@@ -11,7 +11,7 @@ public class ParseException extends Exception {
 
     /**
      * Creates a new exception with the given error details.
-     * 
+     *
      * @param message context about the error that occurred
      */
     public ParseException(final String message) {
@@ -20,7 +20,7 @@ public class ParseException extends Exception {
 
     /**
      * Creates a new exception caused by another exception.
-     * 
+     *
      * @param message context about the error that occurred
      * @param t the cause of this exception
      */

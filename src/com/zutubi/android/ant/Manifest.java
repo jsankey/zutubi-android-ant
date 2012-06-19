@@ -27,7 +27,7 @@ public class Manifest {
 
     /**
      * Creates a new manifest by parsing the given AndroidManifest.xml file.
-     * 
+     *
      * @param inputFile the manifest file
      * @throws ParseException on any parse error
      */
@@ -50,7 +50,7 @@ public class Manifest {
 
     /**
      * Retrieves the android:versionCode.
-     * 
+     *
      * @return the version code
      */
     public String getVersionCode() {
@@ -60,7 +60,7 @@ public class Manifest {
     /**
      * Sets the android:versionCode, adding the attribute if it does not already
      * exist.
-     * 
+     *
      * @param versionCode the new version code
      */
     public void setVersionCode(final String versionCode) {
@@ -69,7 +69,7 @@ public class Manifest {
 
     /**
      * Retrieves the android:versionName.
-     * 
+     *
      * @return the version name
      */
     public String getVersionName() {
@@ -79,7 +79,7 @@ public class Manifest {
     /**
      * Sets the android:versionName, adding the attribute if it does not already
      * exist.
-     * 
+     *
      * @param versionName the new version name
      */
     public void setVersionName(final String versionName) {
@@ -98,7 +98,7 @@ public class Manifest {
     /**
      * Writes this manifest out to the given file. As far as possible all
      * whitespace and formatting from the original file is preserved.
-     * 
+     *
      * @param file the file to write out to
      * @throws IOException if there is any error writing to the file
      */

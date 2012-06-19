@@ -10,7 +10,7 @@ public class SetVersionTask extends AbstractManifestUpdateTask {
 
     /**
      * Sets the new android:versionName value.
-     * 
+     *
      * @param name the new version name, may be empty or null to leave the name
      *            unchanged
      */
@@ -20,7 +20,7 @@ public class SetVersionTask extends AbstractManifestUpdateTask {
 
     /**
      * Sets the new android:versionCode value.
-     * 
+     *
      * @param code the new version code, may be empty or null to leave the code
      *            unchanged
      */

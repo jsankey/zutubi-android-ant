@@ -12,7 +12,7 @@ public class BumpVersionTask extends AbstractManifestUpdateTask {
     /**
      * Sets whether the last component of the android:versionName value is also
      * incremented.
-     * 
+     *
      * @param bumpname if true, also increment the versionName, if false leave
      *            the versionName unchanged
      */
