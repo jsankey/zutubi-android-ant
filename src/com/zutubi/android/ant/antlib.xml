@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <antlib xmlns:current="ant:current">
-	<taskdef name="bumpversion" classname="com.zutubi.android.ant.BumpVersionTask"/>
-	<taskdef name="setversion" classname="com.zutubi.android.ant.SetVersionTask"/>
+    <taskdef name="bumpversion" classname="com.zutubi.android.ant.BumpVersionTask"/>
+    <taskdef name="ndkbuild" classname="com.zutubi.android.ant.NdkBuildTask"/>
+    <taskdef name="setversion" classname="com.zutubi.android.ant.SetVersionTask"/>
 </antlib>
