@@ -91,7 +91,8 @@ public abstract class ManifestUpdateTaskTestSupport {
     }
 
     protected File copyToTempFile(final File inputFile) {
-        final File tempFile = fileUtils.createTempFile(getClass().getName(), ".tmp", null, true, false);
+        final File tempFile = fileUtils.createTempFile(getClass().getName(), ".tmp", null, true,
+                false);
         try {
             fileUtils.copyFile(inputFile, tempFile);
         } catch (final IOException e) {

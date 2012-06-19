@@ -1,7 +1,7 @@
+
 package com.zutubi.android.ant;
 
 import org.apache.tools.ant.BuildException;
-
 
 /**
  * Ant task to increment the version in an AndroidManifest.xml file.
@@ -12,9 +12,9 @@ public class BumpVersionTask extends AbstractManifestUpdateTask {
     /**
      * Sets whether the last component of the android:versionName value is also
      * incremented.
-     *
+     * 
      * @param bumpname if true, also increment the versionName, if false leave
-     *                 the versionName unchanged
+     *            the versionName unchanged
      */
     public void setBumpname(final boolean bumpname) {
         this.bumpname = bumpname;
@@ -35,7 +35,8 @@ public class BumpVersionTask extends AbstractManifestUpdateTask {
             final int code = Integer.parseInt(codeString);
             manifest.setVersionCode(Integer.toString(code + 1));
         } catch (final NumberFormatException e) {
-            throw new BuildException("Invalid version code '" + codeString + "': expected an integer");
+            throw new BuildException("Invalid version code '" + codeString
+                    + "': expected an integer");
         }
     };
 
@@ -62,10 +63,12 @@ public class BumpVersionTask extends AbstractManifestUpdateTask {
                 lastElement = Integer.toString(n + 1);
                 manifest.setVersionName(prefix + lastElement);
             } catch (final NumberFormatException e) {
-                throw new BuildException("Invalid version name '" + versionName + "': last element is not an integer");
+                throw new BuildException("Invalid version name '" + versionName
+                        + "': last element is not an integer");
             }
         } else {
-            throw new BuildException("Invalid version name '" + versionName + "': last element is empty");
+            throw new BuildException("Invalid version name '" + versionName
+                    + "': last element is empty");
         }
     }
 }

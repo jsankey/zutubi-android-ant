@@ -1,3 +1,4 @@
+
 package com.zutubi.android.ant;
 
 /**
@@ -6,7 +7,7 @@ package com.zutubi.android.ant;
 public class Util {
     /**
      * Tests if a given string is non-null and non-empty.
-     *
+     * 
      * @param s the string to test
      * @return true if the string is non-null and non-empty
      */
