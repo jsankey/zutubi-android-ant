@@ -12,7 +12,14 @@ Android SDK.
 Available Tasks
 ---------------
 
-Currently, zutubi-android-ant contains two tasks:
+Currently, zutubi-android-ant contains three tasks:
+
+* ndkbuild
+
+A task that makes it simpler to run the native build command ndk-build.
+This task is an extension of the built-in exec task that will find
+ndk-build based on the value of ndk.dir and your current operating
+system.
 
 * setversion
 
