@@ -49,13 +49,13 @@ public class NdkBuildTaskTest {
 
     @Test
     public void testGetNdkBuildCommandBadNdkDirProperty() {
-        mNdkBuildTask.getProject().setProperty(NdkBuildTask.PROPERTY_NDK_DIR, "/no/such/dir");
+        mNdkBuildTask.getProject().setProperty(Properties.PROPERTY_NDK_DIR, "/no/such/dir");
         assertEquals(NdkBuildTask.COMMAND_NDK_BUILD, mNdkBuildTask.getNdkBuildCommand());
     }
 
     @Test
     public void testGetNdkBuildCommandNdkDirProperty() {
-        mNdkBuildTask.getProject().setProperty(NdkBuildTask.PROPERTY_NDK_DIR, mFakeNdkDir.getAbsolutePath());
+        mNdkBuildTask.getProject().setProperty(Properties.PROPERTY_NDK_DIR, mFakeNdkDir.getAbsolutePath());
         File expectedCommand = Os.isFamily(Os.FAMILY_WINDOWS) ? mFakeBuildCmd : mFakeBuildScript;
         assertEquals(expectedCommand.getAbsolutePath(), mNdkBuildTask.getNdkBuildCommand());
     }

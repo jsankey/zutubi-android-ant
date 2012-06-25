@@ -12,7 +12,13 @@ Android SDK.
 Available Tasks
 ---------------
 
-Currently, zutubi-android-ant contains three tasks:
+Currently, zutubi-android-ant contains four tasks:
+
+* lint
+
+A task that makes it simpler to run the Android lint tool.  This task
+is an extension of the built-in exec task that will find lint based on
+the value of sdk.dir and your current operating system.
 
 * ndkbuild
 

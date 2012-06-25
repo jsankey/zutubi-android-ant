@@ -13,11 +13,6 @@ import org.apache.tools.ant.taskdefs.condition.Os;
  */
 public class NdkBuildTask extends ExecTask {
     /**
-     * Name of the Android Ant build property that points to the NDK install
-     * directory.
-     */
-    public static final String PROPERTY_NDK_DIR = "ndk.dir";
-    /**
      * Usual ndk-build command.
      */
     public static final String NDK_BUILD = "ndk-build";
@@ -41,7 +36,7 @@ public class NdkBuildTask extends ExecTask {
      * @return the most specific ndk-build command that can be found
      */
     String getNdkBuildCommand() {
-        String ndkDir = getProject().getProperty(PROPERTY_NDK_DIR);
+        String ndkDir = getProject().getProperty(Properties.PROPERTY_NDK_DIR);
         if (Util.stringSet(ndkDir)) {
             File ndkBuild = new File(ndkDir, COMMAND_NDK_BUILD);
             if (ndkBuild.exists()) {
