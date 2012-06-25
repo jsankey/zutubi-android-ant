@@ -31,7 +31,7 @@ public class LintTaskTest {
 
         mFakeToolsDir = new File(mFakeSdkDir, "tools");
         assertTrue(mFakeToolsDir.mkdir());
-        
+
         mFakeLint = new File(mFakeToolsDir, "lint");
         assertTrue(mFakeLint.createNewFile());
 
