@@ -11,6 +11,8 @@ import de.pdark.decentxml.XMLWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A wrapper around an AndroidManifest.xml DOM tree that provides access to a
@@ -18,9 +20,11 @@ import java.io.IOException;
  */
 public class Manifest {
     private static final String ELEMENT_MANIFEST = "manifest";
+    private static final String ELEMENT_USES_PERMISSION = "uses-permission";
 
-    private static final String ATTRIBUTE_VERSION_NAME = "android:versionName";
+    private static final String ATTRIBUTE_NAME = "android:name";
     private static final String ATTRIBUTE_VERSION_CODE = "android:versionCode";
+    private static final String ATTRIBUTE_VERSION_NAME = "android:versionName";
 
     private final Document document;
     private final Element manifestElement;
@@ -77,13 +81,46 @@ public class Manifest {
     }
 
     /**
-     * Sets the android:versionName, adding the attribute if it does not already
-     * exist.
+     * Sets the android:versionName, adding the attribute if it does not
+     * already exist.
      *
      * @param versionName the new version name
      */
     public void setVersionName(final String versionName) {
         setAttributeValue(ATTRIBUTE_VERSION_NAME, versionName);
+    }
+
+    /**
+     * Returns the names of all permissions referenced from uses-permissions
+     * elements, in the order they appear.
+     *
+     * @return the names of all used permissions
+     */
+    public List<String> getUsedPermissions() {
+        List<String> result = new LinkedList<String>();
+        for (Element child : manifestElement.getChildren(ELEMENT_USES_PERMISSION)) {
+            String permission = child.getAttributeValue(ATTRIBUTE_NAME);
+            if (permission != null) {
+                result.add(permission);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Removes any uses-permissions elements with the given permission name
+     * from the manifest.
+     *
+     * @param name name of the permission to remove, e.g.
+     *             android.permission.WRITE_EXTERNAL_STORAGE
+     */
+    public void removeUsedPermission(final String name) {
+        for (Element child : manifestElement.getChildren(ELEMENT_USES_PERMISSION)) {
+            if (name.equals(child.getAttributeValue(ATTRIBUTE_NAME))) {
+                manifestElement.removeNode(child);
+            }
+        }
     }
 
     private void setAttributeValue(final String name, final String value) {

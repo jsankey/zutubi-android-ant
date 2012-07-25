@@ -12,7 +12,7 @@ Android SDK.
 Available Tasks
 ---------------
 
-Currently, zutubi-android-ant contains four tasks:
+Currently, zutubi-android-ant contains five tasks:
 
 * lint
 
@@ -26,6 +26,16 @@ A task that makes it simpler to run the native build command ndk-build.
 This task is an extension of the built-in exec task that will find
 ndk-build based on the value of ndk.dir and your current operating
 system.
+
+* removeusedpermission
+
+Removes all uses-permission elements that reference a particular named
+permission.  This can be used, for example, to strip permissions used
+in development before publishing an application.
+
+Attributes:
+permission: the name of the permission to remove, e.g.
+            android.permission.INTERNET (required)
 
 * setversion
 
