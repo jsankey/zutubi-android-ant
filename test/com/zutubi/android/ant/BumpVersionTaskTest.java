@@ -3,6 +3,8 @@ package com.zutubi.android.ant;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 public class BumpVersionTaskTest extends ManifestUpdateTaskTestSupport {
@@ -48,14 +50,14 @@ public class BumpVersionTaskTest extends ManifestUpdateTaskTestSupport {
     }
 
     @Test
-    public void testIgnoreInvalidName() throws ParseException {
+    public void testIgnoreInvalidName() throws ParseException, IOException {
         final Manifest manifest = runTaskAndParseResult();
         assertEquals("2", manifest.getVersionCode());
         assertEquals("invalid", manifest.getVersionName());
     }
 
     @Test
-    public void testCodeAndName() throws ParseException {
+    public void testCodeAndName() throws ParseException, IOException {
         task.setBumpname(true);
         final Manifest manifest = runTaskAndParseResult();
         assertEquals("4", manifest.getVersionCode());
@@ -63,14 +65,14 @@ public class BumpVersionTaskTest extends ManifestUpdateTaskTestSupport {
     }
 
     @Test
-    public void testIgnoreName() throws ParseException {
+    public void testIgnoreName() throws ParseException, IOException {
         final Manifest manifest = runTaskAndParseResult();
         assertEquals("4", manifest.getVersionCode());
         assertEquals("1.0", manifest.getVersionName());
     }
 
     @Test
-    public void testSimpleIntegerName() throws ParseException {
+    public void testSimpleIntegerName() throws ParseException, IOException {
         task.setBumpname(true);
         final Manifest manifest = runTaskAndParseResult();
         assertEquals("11", manifest.getVersionCode());
@@ -78,7 +80,7 @@ public class BumpVersionTaskTest extends ManifestUpdateTaskTestSupport {
     }
 
     @Test
-    public void testOnlyLastElementIsIntegerName() throws ParseException {
+    public void testOnlyLastElementIsIntegerName() throws ParseException, IOException {
         task.setBumpname(true);
         final Manifest manifest = runTaskAndParseResult();
         assertEquals("1", manifest.getVersionCode());
@@ -86,7 +88,7 @@ public class BumpVersionTaskTest extends ManifestUpdateTaskTestSupport {
     }
 
     @Test
-    public void testEmptyElementsName() throws ParseException {
+    public void testEmptyElementsName() throws ParseException, IOException {
         task.setBumpname(true);
         final Manifest manifest = runTaskAndParseResult();
         assertEquals("43", manifest.getVersionCode());

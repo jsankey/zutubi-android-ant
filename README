@@ -12,7 +12,7 @@ Android SDK.
 Available Tasks
 ---------------
 
-Currently, zutubi-android-ant contains five tasks:
+Currently, zutubi-android-ant contains six tasks:
 
 * lint
 
@@ -27,11 +27,25 @@ This task is an extension of the built-in exec task that will find
 ndk-build based on the value of ndk.dir and your current operating
 system.
 
+* addusedpermission
+
+Adds a new uses-permission element that reference a particular named
+permission.  This can be used, for example, to temporarily add
+permissions used in development before publishing an application.  The
+task attempts to add the element just after existing uses-permission
+elements with the same indent.
+
+Attributes:
+permission: the name of the permission to add, e.g.
+            android.permission.INTERNET (required)
+
 * removeusedpermission
 
 Removes all uses-permission elements that reference a particular named
 permission.  This can be used, for example, to strip permissions used
-in development before publishing an application.
+in development before publishing an application.  The task attempts to
+also remove the newline and indent that precede the elements to
+preserve decent formatting.
 
 Attributes:
 permission: the name of the permission to remove, e.g.

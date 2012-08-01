@@ -112,6 +112,41 @@ public class Manifest {
     }
 
     /**
+     * Adds a uses-permissions element with the given permission name to the
+     * manifest.  If the manifest already contains some uses-permission
+     * elements, an attempt is made to add the new element just after those
+     * elements with the same indent.
+     *
+     * @param name name of the permission to add, e.g.
+     *             android.permission.WRITE_EXTERNAL_STORAGE
+     */
+    public void addUsedPermission(final String name) {
+        // If we don't find existing elements, just add at the start (Android
+        // docs list uses-permission first).  Also use a 4-space indent as a
+        // default when we can't do better.
+        int insertIndex = 0;
+        String indentString = "\n    ";
+
+        final List<Element> existingElements = manifestElement.getChildren(ELEMENT_USES_PERMISSION);
+        if (!existingElements.isEmpty()) {
+            Element lastExistingElement = existingElements.get(existingElements.size() - 1);
+            insertIndex = manifestElement.nodeIndexOf(lastExistingElement) + 1;
+
+            Text prefix = findPrefix(lastExistingElement);
+            if (prefix != null) {
+                indentString = prefix.getText();
+                // Note a newline must exist for us to have a prefix.
+                int lastNewlineIndex = indentString.lastIndexOf('\n');
+                indentString = indentString.substring(lastNewlineIndex);
+            }
+        }
+
+        final Element elementToAdd = new Element(ELEMENT_USES_PERMISSION);
+        elementToAdd.addAttribute(new Attribute(ATTRIBUTE_NAME, name));
+        manifestElement.addNodes(insertIndex, new Text(indentString), elementToAdd);
+    }
+
+    /**
      * Removes any uses-permissions elements with the given permission name
      * from the manifest.
      *
@@ -139,25 +174,29 @@ public class Manifest {
      * @param element the element to be removed
      */
     private void removeElementAndPrefix(final Element element) {
-        // We only have the limited ability to remove a prefix if it is within
+        final Element parentElement = element.getParentElement();
+        final Text prefix = findPrefix(element);
+        if (prefix != null) {
+            String newText = prefix.getText().replaceFirst("(?s)\\n[ \\t]*$", "");
+            if (newText.length() > 0) {
+                prefix.setText(newText);
+            } else {
+                parentElement.removeNode(prefix);
+            }
+        }
+
+        parentElement.removeNode(element);
+    }
+
+    private Text findPrefix(final Element element) {
+        // We only have the limited ability to detect a prefix if it is within
         // a single text node - it might be nice to generalise to cases where
         // there are multiple text nodes but I'm not sure if they occur with
         // this parser.
-        final Element parentElement = element.getParentElement();
         Text prefix = null;
-        for (final Node node : parentElement.getNodes()) {
+        for (final Node node : element.getParentElement().getNodes()) {
             if (node == element) {
-                if (prefix != null) {
-                    String newText = prefix.getText().replaceFirst("(?s)\\n[ \\t]*$", "");
-                    if (newText.length() > 0) {
-                        prefix.setText(newText);
-                    } else {
-                        parentElement.removeNode(prefix);
-                    }
-                }
-
-                parentElement.removeNode(element);
-                return;
+                break;
             }
 
             // Look for text nodes where the text ends with a newline followed
@@ -169,6 +208,8 @@ public class Manifest {
                 prefix = null;
             }
         }
+
+        return prefix;
     }
 
     private void setAttributeValue(final String name, final String value) {

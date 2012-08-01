@@ -50,7 +50,7 @@ public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
     }
 
     @Test
-    public void testEmptyManifestElement() throws ParseException {
+    public void testEmptyManifestElement() throws ParseException, IOException {
         task.setCode(TEST_CODE);
         task.setName(TEST_NAME);
 
@@ -96,7 +96,7 @@ public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
 
     @Test
     public void testContentAndFormattingPreserved() throws IOException {
-        final File originalFile = getInputFile(ORIGINAL_FILE);
+        final File originalFile = getInputFile(ORIGINAL_FILE, false);
         final File tempFile = copyToTempFile(originalFile);
         task.setManifestfile(tempFile.getAbsolutePath());
         task.execute();

@@ -1,6 +1,7 @@
 
 package com.zutubi.android.ant;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -10,6 +11,7 @@ import org.apache.tools.ant.util.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
@@ -23,8 +25,20 @@ public abstract class ManifestUpdateTaskTestSupport {
 
     protected abstract AbstractManifestUpdateTask getTask();
 
-    protected Manifest runTaskAndParseResult() throws ParseException {
-        return runTaskAndParseResult(copyInputFile(getTestMethodName()));
+    protected Manifest runTaskAndParseResult() throws ParseException, IOException {
+        return runTaskAndParseResult(getTestMethodName());
+    }
+
+    protected Manifest runTaskAndParseResult(final String name) throws ParseException, IOException {
+        File tempFile = copyInputFile(name);
+        Manifest manifest = runTaskAndParseResult(tempFile);
+        File expectedFile = getInputFile(name + ".expected", false);
+        if (expectedFile != null) {
+            String expectedContent = FileUtils.readFully(new FileReader(expectedFile));
+            String gotContent = FileUtils.readFully(new FileReader(tempFile));
+            assertEquals(expectedContent, gotContent);
+        }
+        return manifest;
     }
 
     protected Manifest runTaskAndParseResult(final File file) throws ParseException {
@@ -71,16 +85,20 @@ public abstract class ManifestUpdateTaskTestSupport {
     }
 
     protected File copyInputFile(final String name) {
-        return copyToTempFile(getInputFile(name));
+        return copyToTempFile(getInputFile(name, true));
     }
 
-    protected File getInputFile(final String name) {
+    protected File getInputFile(final String name, final boolean required) {
         final Class<?> clazz = getClass();
 
         final String resourceName = clazz.getSimpleName() + "." + name + ".xml";
         final URL resource = clazz.getResource(resourceName);
         if (resource == null) {
-            fail("Required resource '" + resourceName + "' not found");
+            if (required) {
+                fail("Required resource '" + resourceName + "' not found");
+            } else {
+                return null;
+            }
         }
 
         try {
