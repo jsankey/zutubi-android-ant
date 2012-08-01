@@ -1,18 +1,21 @@
 
 package com.zutubi.android.ant;
 
-import de.pdark.decentxml.Attribute;
-import de.pdark.decentxml.Document;
-import de.pdark.decentxml.Element;
-import de.pdark.decentxml.XMLIOSource;
-import de.pdark.decentxml.XMLParser;
-import de.pdark.decentxml.XMLWriter;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
+import de.pdark.decentxml.Attribute;
+import de.pdark.decentxml.Document;
+import de.pdark.decentxml.Element;
+import de.pdark.decentxml.Node;
+import de.pdark.decentxml.Text;
+import de.pdark.decentxml.XMLIOSource;
+import de.pdark.decentxml.XMLParser;
+import de.pdark.decentxml.XMLTokenizer.Type;
+import de.pdark.decentxml.XMLWriter;
 
 /**
  * A wrapper around an AndroidManifest.xml DOM tree that provides access to a
@@ -116,9 +119,54 @@ public class Manifest {
      *             android.permission.WRITE_EXTERNAL_STORAGE
      */
     public void removeUsedPermission(final String name) {
-        for (Element child : manifestElement.getChildren(ELEMENT_USES_PERMISSION)) {
+        final List<Element> elementsToRemove = new LinkedList<Element>();
+        for (final Element child : manifestElement.getChildren(ELEMENT_USES_PERMISSION)) {
             if (name.equals(child.getAttributeValue(ATTRIBUTE_NAME))) {
-                manifestElement.removeNode(child);
+                elementsToRemove.add(child);
+            }
+        }
+
+        for (final Element element : elementsToRemove) {
+            removeElementAndPrefix(element);
+        }
+    }
+
+    /**
+     * Removes an element, with an attempt to also remove the newline and
+     * indent that precede it.  Only predictable prefixes are removed, as it
+     * is not critical to removing the element.
+     *
+     * @param element the element to be removed
+     */
+    private void removeElementAndPrefix(final Element element) {
+        // We only have the limited ability to remove a prefix if it is within
+        // a single text node - it might be nice to generalise to cases where
+        // there are multiple text nodes but I'm not sure if they occur with
+        // this parser.
+        final Element parentElement = element.getParentElement();
+        Text prefix = null;
+        for (final Node node : parentElement.getNodes()) {
+            if (node == element) {
+                if (prefix != null) {
+                    String newText = prefix.getText().replaceFirst("(?s)\\n[ \\t]*$", "");
+                    if (newText.length() > 0) {
+                        prefix.setText(newText);
+                    } else {
+                        parentElement.removeNode(prefix);
+                    }
+                }
+
+                parentElement.removeNode(element);
+                return;
+            }
+
+            // Look for text nodes where the text ends with a newline followed
+            // by a whitespace indent.  (?s) enables single line mode - so dot
+            // will match newlines and $ only matches the end of the string.
+            if (node.getType() == Type.TEXT && ((Text) node).getText().matches("(?s).*\\n[ \\t]*$")) {
+                prefix = (Text) node;
+            } else {
+                prefix = null;
             }
         }
     }
