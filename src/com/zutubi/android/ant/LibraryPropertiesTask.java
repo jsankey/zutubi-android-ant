@@ -21,6 +21,7 @@ public class LibraryPropertiesTask extends Task {
     private String libsDir = "libs";
     private String jarPattern = "(.+)\\.jar";
     private String srcReplacement = "src/$1-sources.jar";
+    private boolean failOnMissingSrc = false;
 
     /**
      * Sets the path of the directory where library jars are found.
@@ -57,6 +58,17 @@ public class LibraryPropertiesTask extends Task {
         this.srcReplacement = srcReplacement;
     }
 
+    /**
+     * Sets a flag indicating if the build should be failed when a library
+     * jar is found without a corresponding sources jar.
+     *
+     * @param failOnMissingSrc if true, fail the build when a library jar
+     *                         without corresponding sources is found
+     */
+    public void setFailOnMissingSrc(final boolean failOnMissingSrc) {
+        this.failOnMissingSrc = failOnMissingSrc;
+    }
+
     @Override
     public void execute() throws BuildException {
         File libs = new File(getProject().getBaseDir(), libsDir);
@@ -73,6 +85,8 @@ public class LibraryPropertiesTask extends Task {
                     final File srcFile = new File(libs, srcPath);
                     if (srcFile.isFile()) {
                         createPropertiesLinking(file, srcPath);
+                    } else if (failOnMissingSrc) {
+                        throw new BuildException("No sources jar found at '" + srcPath + "' for library '" + file.getName() + "'.");
                     }
                 }
             }
