@@ -93,6 +93,9 @@ srcReplacement: a replacement string used to generate the path of a
                 source jar from the name of the corresponding library
                 jar.  Typically the replacement references groups
                 captured by jarPattern.  (default: src/$1-sources.jar)
+failOnMissingSrc: if true, the build will be failed if a library jar
+                  is found with no corresponding sources jar (default:
+                  false)
 
 Obtaining the Jar
 -----------------
