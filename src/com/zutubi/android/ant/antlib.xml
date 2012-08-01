@@ -2,6 +2,7 @@
 <antlib xmlns:current="ant:current">
     <taskdef name="addusedpermission" classname="com.zutubi.android.ant.AddUsedPermissionTask"/>
     <taskdef name="bumpversion" classname="com.zutubi.android.ant.BumpVersionTask"/>
+    <taskdef name="libproperties" classname="com.zutubi.android.ant.LibraryPropertiesTask"/>
     <taskdef name="lint" classname="com.zutubi.android.ant.LintTask"/>
     <taskdef name="ndkbuild" classname="com.zutubi.android.ant.NdkBuildTask"/>
     <taskdef name="removeusedpermission" classname="com.zutubi.android.ant.RemoveUsedPermissionTask"/>

@@ -12,7 +12,7 @@ Android SDK.
 Available Tasks
 ---------------
 
-Currently, zutubi-android-ant contains six tasks:
+Currently, zutubi-android-ant contains seven tasks:
 
 * lint
 
@@ -72,6 +72,27 @@ Attributes (all optional):
 bumpname: if true, the last element of the version name will also be
           incremented (default: false)
 manifestfile: path of the manifest file (default: AndroidManifest.xml)
+
+* libproperties
+
+A task to generate .properties files alongside library jars that point
+to the source jars for those libraries.  This allows the ADT tools to
+link the library to the sources in Eclipse.  This task is set up by
+default to link a jar libs/a.jar to sources at libs/src/a-sources.jar
+(if the sources are found).
+
+Attributes (all optional):
+libDir: path, relative to the base of the build, of the directory
+        containing the library jars (default: libs)
+jarPattern: a regular expression used to identify library jars.  All
+            files in the libraries directory with names that match this
+            pattern are taken as jars.  This pattern typically includes
+            capturing groups for reference in srcReplacement.
+            (default: (.+)\.jar).
+srcReplacement: a replacement string used to generate the path of a
+                source jar from the name of the corresponding library
+                jar.  Typically the replacement references groups
+                captured by jarPattern.  (default: src/$1-sources.jar)
 
 Obtaining the Jar
 -----------------
