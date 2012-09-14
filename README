@@ -9,136 +9,69 @@ are useful for Android (http://www.android.com/) projects.  These
 tasks are intended to complement the Ant support provided by the
 Android SDK.
 
+Home Page
+---------
+
+The zutubi-android-ant project has home on the web at:
+
+http://zutubi.com/source/projects/zutubi-android-ant/
+
+Check it out for full project documentation.
+
+License
+-------
+
+This code is licensed under the Apache License, Version 2.0.  See the
+LICENSE file for details.
+
+Quick Start
+-----------
+
+To use zutubi-android-ant in your projects, you can:
+
+* Download the latest jar from:
+    http://github.com/jsankey/zutubi-android-ant/downloads
+  and add it to your source tree.
+* Define a namespace on the root element of your build file as follows:
+    <project name="MyProject" xmlns:zaa="antlib:com.zutubi.android.ant">
+* Nested within this root element, add the following taskdef:
+    <taskdef uri="antlib:com.zutubi.android.ant"
+             resource="com/zutubi/android/ant/antlib.xml"
+             classpath="path/to/zutubi-android-ant.jar"/>
+* Reference the tasks in under the zaa: namespace, e.g.:
+    <target name="run-lint">
+        <zaa:lint>
+            <arg line="--check MissingPrefix /src/astrid/">
+        </zaa:lint>
+    </target>
+
 Available Tasks
 ---------------
 
 Currently, zutubi-android-ant contains seven tasks:
 
-* lint
+* addusedpermission   : adds <uses-permission> elements to a manifest
+* bumpversion         : bumps the project versionCode (optionally versionName)
+* libproperties       : makes it easy to link library sources in Eclipse
+* lint                : convenience task for running Android lint
+* ndkbuild            : convenience task for running native builds
+* removeusedpermission: removes <uses-permission> elements from a manifest
+* setversion          : sets the project versionCode and/or versionName
 
-A task that makes it simpler to run the Android lint tool.  This task
-is an extension of the built-in exec task that will find lint based on
-the value of sdk.dir and your current operating system.
+Full documentation for the tasks is available online:
 
-* ndkbuild
+http://zutubi.com/source/projects/zutubi-android-ant/documentation/#tasks
 
-A task that makes it simpler to run the native build command ndk-build.
-This task is an extension of the built-in exec task that will find
-ndk-build based on the value of ndk.dir and your current operating
-system.
+More Information
+----------------
 
-* addusedpermission
+For more details check out:
 
-Adds a new uses-permission element that reference a particular named
-permission.  This can be used, for example, to temporarily add
-permissions used in development before publishing an application.  The
-task attempts to add the element just after existing uses-permission
-elements with the same indent.
-
-Attributes:
-permission: the name of the permission to add, e.g.
-            android.permission.INTERNET (required)
-
-* removeusedpermission
-
-Removes all uses-permission elements that reference a particular named
-permission.  This can be used, for example, to strip permissions used
-in development before publishing an application.  The task attempts to
-also remove the newline and indent that precede the elements to
-preserve decent formatting.
-
-Attributes:
-permission: the name of the permission to remove, e.g.
-            android.permission.INTERNET (required)
-
-* setversion
-
-A task that can update the versionName and/or versionCode attributes
-of an android manifest XML file, leaving the rest of the file
-unchanged.
-
-Attributes (all optional):
-code: the versionCode to set (default: leave unchanged)
-name: the versionName to set (default: leave unchanged)
-manifestfile: path of the manifest file (default: AndroidManifest.xml)
-
-* bumpversion
-
-A task to increment the versionCode attribute of a manifest file, and
-optionally the versionName attribute (if it uses a dotted-decimal
-format).
-
-Attributes (all optional):
-bumpname: if true, the last element of the version name will also be
-          incremented (default: false)
-manifestfile: path of the manifest file (default: AndroidManifest.xml)
-
-* libproperties
-
-A task to generate .properties files alongside library jars that point
-to the source jars for those libraries.  This allows the ADT tools to
-link the library to the sources in Eclipse.  This task is set up by
-default to link a jar libs/a.jar to sources at libs/src/a-sources.jar
-(if the sources are found).
-
-Attributes (all optional):
-libDir: path, relative to the base of the build, of the directory
-        containing the library jars (default: libs)
-jarPattern: a regular expression used to identify library jars.  All
-            files in the libraries directory with names that match this
-            pattern are taken as jars.  This pattern typically includes
-            capturing groups for reference in srcReplacement.
-            (default: (.+)\.jar).
-srcReplacement: a replacement string used to generate the path of a
-                source jar from the name of the corresponding library
-                jar.  Typically the replacement references groups
-                captured by jarPattern.  (default: src/$1-sources.jar)
-
-Obtaining the Jar
------------------
-
-You can download the latest zutubi-android-ant release from the GitHub
-downloads page:
-
-http://github.com/jsankey/zutubi-android-ant/downloads
-
-You can also grab the latest directly from the build server:
-
-http://pulse.zutubi.com/browse/projects/zutubi-android-ant-release/builds/success/
-
-(Click on "jar" in the "featured artifacts" table on the right of the
-page.)
-
-Using the Tasks
----------------
-
-To use zutubi-android-ant in your projects, you should add the jar
-file to your source tree, then use the taskdef Ant task to import the
-tasks.  The recommended way to do this is to define an XML namespace
-for the tasks, and reference the antlib.xml file provided in the jar.
-For example, you can define a namespace on the root element of your
-build file as follows:
-
-<project name="MyProject" xmlns:zaa="antlib:com.zutubi.android.ant">
-
-Then within this root element, add the following taskdef:
-
-<taskdef uri="antlib:com.zutubi.android.ant"
-	 resource="com/zutubi/android/ant/antlib.xml"
-	 classpath="path/to/zutubi-android-ant.jar"/>
-
-With this namespace and taskdef in place, you are able to access the
-tasks using the "zaa:" namespace prefix.  For example, to use the
-setversion task in a versioned-release target:
-
-<target name="versioned-release">
-    <zaa:setversion code="3" name="0.3"/>
-    ...
-</target>
-
-See the examples/ subdirectory for simple Ant build files that
-illustrate the usage of each task (you will need to build the jar
-first to run them, see below).
+* The project home page (includes full documentation):
+    http://zutubi.com/source/projects/zutubi-android-ant/
+* The example projects in the examples/ subdirectory (requires a built jar).
+* The GitHub project page:
+    https://github.com/jsankey/zutubi-android-ant/
 
 Building
 --------
@@ -155,18 +88,12 @@ $ ant -p
 The build uses the Ant Script Library (http://www.exubero.com/asl/)
 for those that wish to understand further.
 
-Contact
--------
+Feedback
+--------
 
-If you have any thoughts, questions etc about the runner, you can
+If you have any thoughts, questions etc about the tasks, you can
 contact me at:
 
   jason@zutubi.com
 
 All feedback is welcome.
-
-License
--------
-
-This code is licensed under the Apache License, Version 2.0.  See the
-LICENSE file for details.
