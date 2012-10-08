@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class SetVersionTaskTest extends ManifestUpdateTaskTestSupport {
+public class SetVersionTaskTest extends ManifestTaskTestSupport {
     private static final String ORIGINAL_CODE = "1";
     private static final String ORIGINAL_NAME = "1.0";
     private static final String TEST_CODE = "8";

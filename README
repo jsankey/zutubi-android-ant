@@ -48,10 +48,11 @@ To use zutubi-android-ant in your projects, you can:
 Available Tasks
 ---------------
 
-Currently, zutubi-android-ant contains seven tasks:
+Currently, zutubi-android-ant contains the following tasks:
 
 * addusedpermission   : adds <uses-permission> elements to a manifest
 * bumpversion         : bumps the project versionCode (optionally versionName)
+* getversion          : captures the versionCode and versionName to properties
 * libproperties       : makes it easy to link library sources in Eclipse
 * lint                : convenience task for running Android lint
 * ndkbuild            : convenience task for running native builds
