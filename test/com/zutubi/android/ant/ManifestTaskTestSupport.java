@@ -20,10 +20,10 @@ import java.net.URL;
 /**
  * Support base class for implementing tests that update manifest files.
  */
-public abstract class ManifestUpdateTaskTestSupport {
+public abstract class ManifestTaskTestSupport {
     protected final FileUtils fileUtils = FileUtils.getFileUtils();
 
-    protected abstract AbstractManifestUpdateTask getTask();
+    protected abstract AbstractManifestTask getTask();
 
     protected Manifest runTaskAndParseResult() throws ParseException, IOException {
         return runTaskAndParseResult(getTestMethodName());
@@ -42,10 +42,22 @@ public abstract class ManifestUpdateTaskTestSupport {
     }
 
     protected Manifest runTaskAndParseResult(final File file) throws ParseException {
-        final AbstractManifestUpdateTask task = getTask();
+        runTask(file);
+        return new Manifest(file);
+    }
+
+    protected void runTask() {
+        runTask(copyInputFile(getTestMethodName()));
+    }
+
+    protected void runTask(final String name) {
+        runTask(copyInputFile(name));
+    }
+
+    protected void runTask(final File file) {
+        final AbstractManifestTask task = getTask();
         task.setManifestfile(file.getAbsolutePath());
         task.execute();
-        return new Manifest(file);
     }
 
     protected void failureTest(final String expectedError) {
@@ -54,7 +66,7 @@ public abstract class ManifestUpdateTaskTestSupport {
 
     protected void failureTest(final String filePath, final String expectedError) {
         try {
-            final AbstractManifestUpdateTask task = getTask();
+            final AbstractManifestTask task = getTask();
             task.setManifestfile(filePath);
             task.execute();
             fail("Expected task to fail.");

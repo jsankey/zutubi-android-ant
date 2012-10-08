@@ -8,7 +8,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AddUsedPermissionTaskTest extends ManifestUpdateTaskTestSupport {
+public class AddUsedPermissionTaskTest extends ManifestTaskTestSupport {
     private static final String PERMISSION = "android.permission.INTERNET";
 
     private final AddUsedPermissionTask task = new AddUsedPermissionTask();
