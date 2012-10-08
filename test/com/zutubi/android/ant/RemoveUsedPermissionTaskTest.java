@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class RemoveUsedPermissionTaskTest extends ManifestUpdateTaskTestSupport {
+public class RemoveUsedPermissionTaskTest extends ManifestTaskTestSupport {
     private static final String FILE_ORIGINAL = "original";
     private static final List<String> ORIGINAL_PERMISSIONS = asList("android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET");
 

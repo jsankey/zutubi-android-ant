@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-public class BumpVersionTaskTest extends ManifestUpdateTaskTestSupport {
+public class BumpVersionTaskTest extends ManifestTaskTestSupport {
     private final BumpVersionTask task = new BumpVersionTask();
 
     @Override
