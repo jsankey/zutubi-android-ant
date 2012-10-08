@@ -48,7 +48,7 @@ To use zutubi-android-ant in your projects, you can:
 Available Tasks
 ---------------
 
-Currently, zutubi-android-ant contains seven tasks:
+Currently, zutubi-android-ant contains the following tasks:
 
 * addusedpermission   : adds <uses-permission> elements to a manifest
 * bumpversion         : bumps the project versionCode (optionally versionName)
