@@ -95,6 +95,57 @@ public class SetVersionTaskTest extends ManifestTaskTestSupport {
     }
 
     @Test
+    public void testGenerateCode() throws ParseException {
+        task.setCode(SetVersionTask.CODE_AUTO);
+        task.setName(TEST_NAME);
+
+        final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
+        assertEquals("2003", manifest.getVersionCode());
+        assertEquals(TEST_NAME, manifest.getVersionName());
+    }
+
+    @Test
+    public void testGenerateCodeCustomMultiplier() throws ParseException {
+        task.setCode(SetVersionTask.CODE_AUTO);
+        task.setName(TEST_NAME);
+        task.setCodemultiplier(30);
+
+        final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
+        assertEquals("63", manifest.getVersionCode());
+        assertEquals(TEST_NAME, manifest.getVersionName());
+    }
+
+    @Test
+    public void testGenerateCodeExistingName() throws ParseException {
+        task.setCode(SetVersionTask.CODE_AUTO);
+
+        final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
+        assertEquals("1000", manifest.getVersionCode());
+        assertEquals("1.0", manifest.getVersionName());
+    }
+
+    @Test
+    public void testGenerateCodeSingleElement() throws ParseException {
+        task.setCode(SetVersionTask.CODE_AUTO);
+        task.setName("42");
+
+        final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
+        assertEquals("42", manifest.getVersionCode());
+        assertEquals("42", manifest.getVersionName());
+    }
+
+    @Test
+    public void testGenerateCodeManyElements() throws ParseException {
+        task.setCode(SetVersionTask.CODE_AUTO);
+        task.setName("2.0.42.3");
+
+        final Manifest manifest = runTaskAndParseResult(copyInputFile(ORIGINAL_FILE));
+        assertEquals("2000042003", manifest.getVersionCode());
+        assertEquals("2.0.42.3", manifest.getVersionName());
+    }
+
+
+    @Test
     public void testContentAndFormattingPreserved() throws IOException {
         final File originalFile = getInputFile(ORIGINAL_FILE, false);
         final File tempFile = copyToTempFile(originalFile);
