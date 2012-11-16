@@ -7,5 +7,6 @@
     <taskdef name="lint" classname="com.zutubi.android.ant.LintTask"/>
     <taskdef name="ndkbuild" classname="com.zutubi.android.ant.NdkBuildTask"/>
     <taskdef name="removeusedpermission" classname="com.zutubi.android.ant.RemoveUsedPermissionTask"/>
+    <taskdef name="setmanifestattributes" classname="com.zutubi.android.ant.SetManifestAttributesTask"/>
     <taskdef name="setversion" classname="com.zutubi.android.ant.SetVersionTask"/>
 </antlib>

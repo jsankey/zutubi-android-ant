@@ -50,14 +50,15 @@ Available Tasks
 
 Currently, zutubi-android-ant contains the following tasks:
 
-* addusedpermission   : adds <uses-permission> elements to a manifest
-* bumpversion         : bumps the project versionCode (optionally versionName)
-* getversion          : captures the versionCode and versionName to properties
-* libproperties       : makes it easy to link library sources in Eclipse
-* lint                : convenience task for running Android lint
-* ndkbuild            : convenience task for running native builds
-* removeusedpermission: removes <uses-permission> elements from a manifest
-* setversion          : sets the project versionCode and/or versionName
+* addusedpermission    : adds <uses-permission> elements to a manifest
+* bumpversion          : bumps the project versionCode (optionally versionName)
+* getversion           : captures the versionCode and versionName to properties
+* libproperties        : makes it easy to link library sources in Eclipse
+* lint                 : convenience task for running Android lint
+* ndkbuild             : convenience task for running native builds
+* removeusedpermission : removes <uses-permission> elements from a manifest
+* setmanifestattributes: sets attributes on the <manifest> element
+* setversion           : sets the project versionCode and/or versionName
 
 Full documentation for the tasks is available online:
 

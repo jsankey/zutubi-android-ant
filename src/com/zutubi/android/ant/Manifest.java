@@ -1,12 +1,6 @@
 
 package com.zutubi.android.ant;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
 import de.pdark.decentxml.Attribute;
 import de.pdark.decentxml.Document;
 import de.pdark.decentxml.Element;
@@ -16,6 +10,13 @@ import de.pdark.decentxml.XMLIOSource;
 import de.pdark.decentxml.XMLParser;
 import de.pdark.decentxml.XMLTokenizer.Type;
 import de.pdark.decentxml.XMLWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A wrapper around an AndroidManifest.xml DOM tree that provides access to a
@@ -100,9 +101,9 @@ public class Manifest {
      * @return the names of all used permissions
      */
     public List<String> getUsedPermissions() {
-        List<String> result = new LinkedList<String>();
-        for (Element child : manifestElement.getChildren(ELEMENT_USES_PERMISSION)) {
-            String permission = child.getAttributeValue(ATTRIBUTE_NAME);
+        final List<String> result = new LinkedList<String>();
+        for (final Element child : manifestElement.getChildren(ELEMENT_USES_PERMISSION)) {
+            final String permission = child.getAttributeValue(ATTRIBUTE_NAME);
             if (permission != null) {
                 result.add(permission);
             }
@@ -129,14 +130,14 @@ public class Manifest {
 
         final List<Element> existingElements = manifestElement.getChildren(ELEMENT_USES_PERMISSION);
         if (!existingElements.isEmpty()) {
-            Element lastExistingElement = existingElements.get(existingElements.size() - 1);
+            final Element lastExistingElement = existingElements.get(existingElements.size() - 1);
             insertIndex = manifestElement.nodeIndexOf(lastExistingElement) + 1;
 
-            Text prefix = findPrefix(lastExistingElement);
+            final Text prefix = findPrefix(lastExistingElement);
             if (prefix != null) {
                 indentString = prefix.getText();
                 // Note a newline must exist for us to have a prefix.
-                int lastNewlineIndex = indentString.lastIndexOf('\n');
+                final int lastNewlineIndex = indentString.lastIndexOf('\n');
                 indentString = indentString.substring(lastNewlineIndex);
             }
         }
@@ -177,7 +178,7 @@ public class Manifest {
         final Element parentElement = element.getParentElement();
         final Text prefix = findPrefix(element);
         if (prefix != null) {
-            String newText = prefix.getText().replaceFirst("(?s)\\n[ \\t]*$", "");
+            final String newText = prefix.getText().replaceFirst("(?s)\\n[ \\t]*$", "");
             if (newText.length() > 0) {
                 prefix.setText(newText);
             } else {
@@ -212,7 +213,22 @@ public class Manifest {
         return prefix;
     }
 
-    private void setAttributeValue(final String name, final String value) {
+    /**
+     * @return a mapping from attribute name to attribute for all attributes
+     *         of the manifest element
+     */
+    public Map<String, Attribute> getAttributes() {
+        return manifestElement.getAttributeMap();
+    }
+
+    /**
+     * Sets the value of a given attribute, adding it if it does not already
+     * exist.
+     *
+     * @param name the name of the attribute to set
+     * @param value the new attribute value
+     */
+    public void setAttributeValue(final String name, final String value) {
         final Attribute attribute = manifestElement.getAttribute(name);
         if (attribute == null) {
             manifestElement.addAttribute(new Attribute(name, value));
