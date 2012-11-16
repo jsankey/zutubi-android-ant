@@ -33,6 +33,20 @@ public class Version {
         addElement(element);
     }
 
+    /**
+     * Creates a new version with the given elements.
+     *
+     * @param elements elements of the version, from most to least significant, must not be empty
+     * @throws IllegalArgumentException if the given list of elements is empty
+     */
+    public Version(final List<Integer> elements) {
+        if (elements.isEmpty()) {
+            throw new IllegalArgumentException("Versions must have at least one element");
+        }
+
+        this.elements = elements;
+    }
+
     private void addElement(final String element) {
         if (element.length() == 0) {
             throw new IllegalArgumentException("Invalid version: empty element at index " + elements.size());
@@ -50,5 +64,44 @@ public class Version {
      */
     public List<Integer> getElements() {
         return Collections.unmodifiableList(elements);
+    }
+
+    /**
+     * Bumps the last element of this version, returning the new version.
+     *
+     * @return a version just larger than this one
+     */
+    public Version bump() {
+        final List<Integer> bumpedElements = new LinkedList<Integer>(elements);
+        final int lastIndex = bumpedElements.size() - 1;
+        bumpedElements.set(lastIndex, bumpedElements.get(lastIndex) + 1);
+        return new Version(bumpedElements);
+    }
+
+    @Override
+    public int hashCode() {
+        return elements.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Version other = (Version) obj;
+        return elements.equals(other.elements);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder(16);
+        for (final Integer element : elements) {
+            if (builder.length() > 0) {
+                builder.append(SEPARATOR);
+            }
+            builder.append(element);
+        }
+
+        return builder.toString();
     }
 }

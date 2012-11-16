@@ -46,29 +46,11 @@ public class BumpVersionTask extends AbstractManifestUpdateTask {
             throw new BuildException("Invalid version name '" + versionName + "': name is empty");
         }
 
-        String prefix;
-        String lastElement;
-        final int lastDotIndex = versionName.lastIndexOf('.');
-        if (lastDotIndex < 0) {
-            prefix = "";
-            lastElement = versionName;
-        } else {
-            prefix = versionName.substring(0, lastDotIndex + 1);
-            lastElement = versionName.substring(lastDotIndex + 1);
-        }
-
-        if (Util.stringSet(lastElement)) {
-            try {
-                final int n = Integer.parseInt(lastElement);
-                lastElement = Integer.toString(n + 1);
-                manifest.setVersionName(prefix + lastElement);
-            } catch (final NumberFormatException e) {
-                throw new BuildException("Invalid version name '" + versionName
-                        + "': last element is not an integer");
-            }
-        } else {
-            throw new BuildException("Invalid version name '" + versionName
-                    + "': last element is empty");
+        try {
+            final Version version = new Version(versionName);
+            manifest.setVersionName(version.bump().toString());
+        } catch (final IllegalArgumentException e) {
+            throw new BuildException(e.getMessage(), e);
         }
     }
 }

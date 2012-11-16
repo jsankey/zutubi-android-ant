@@ -3,9 +3,9 @@ package com.zutubi.android.ant;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class BumpVersionTaskTest extends ManifestTaskTestSupport {
     private final BumpVersionTask task = new BumpVersionTask();
@@ -34,19 +34,19 @@ public class BumpVersionTaskTest extends ManifestTaskTestSupport {
     @Test
     public void testNonIntegerName() {
         task.setBumpname(true);
-        failureTest("Invalid version name 'x': last element is not an integer");
+        failureTest("Invalid version: element 'x' at index 0 is not an integer");
     }
 
     @Test
     public void testEmptyLastElementName() {
         task.setBumpname(true);
-        failureTest("Invalid version name '1.': last element is empty");
+        failureTest("Invalid version: empty element at index 1");
     }
 
     @Test
     public void testNonIntegerLastElementName() {
         task.setBumpname(true);
-        failureTest("Invalid version name '1.x': last element is not an integer");
+        failureTest("Invalid version: element 'x' at index 1 is not an integer");
     }
 
     @Test
@@ -77,21 +77,5 @@ public class BumpVersionTaskTest extends ManifestTaskTestSupport {
         final Manifest manifest = runTaskAndParseResult();
         assertEquals("11", manifest.getVersionCode());
         assertEquals("4", manifest.getVersionName());
-    }
-
-    @Test
-    public void testOnlyLastElementIsIntegerName() throws ParseException, IOException {
-        task.setBumpname(true);
-        final Manifest manifest = runTaskAndParseResult();
-        assertEquals("1", manifest.getVersionCode());
-        assertEquals("x.2", manifest.getVersionName());
-    }
-
-    @Test
-    public void testEmptyElementsName() throws ParseException, IOException {
-        task.setBumpname(true);
-        final Manifest manifest = runTaskAndParseResult();
-        assertEquals("43", manifest.getVersionCode());
-        assertEquals(".1..2", manifest.getVersionName());
     }
 }
