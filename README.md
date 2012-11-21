@@ -53,6 +53,7 @@ Currently, zutubi-android-ant contains the following tasks:
 * addusedpermission    : adds <uses-permission> elements to a manifest
 * bumpversion          : bumps the project versionCode (optionally versionName)
 * getversion           : captures the versionCode and versionName to properties
+* jsonversion          : generates a JSON file usable with cwac-updater
 * libproperties        : makes it easy to link library sources in Eclipse
 * lint                 : convenience task for running Android lint
 * ndkbuild             : convenience task for running native builds
