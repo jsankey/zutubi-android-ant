@@ -25,31 +25,31 @@ public class JsonVersionTaskTest extends ManifestTaskTestSupport {
 
     @Test
     public void testNoJsonFile() {
-        task.setUpdateUrl(TEST_URL);
+        task.setUpdateurl(TEST_URL);
         try {
             task.execute();
             fail("Should required a jsonFile");
         } catch (final BuildException e) {
-            assertThat(e.getMessage(), containsString("jsonFile is required"));
+            assertThat(e.getMessage(), containsString("jsonfile is required"));
         }
     }
 
     @Test
     public void testNoUpdateUrl() {
-        task.setJsonFile(new File("test.json"));
+        task.setJsonfile(new File("test.json"));
         try {
             task.execute();
             fail("Should required an updateURL");
         } catch (final BuildException e) {
-            assertThat(e.getMessage(), containsString("updateUrl is required"));
+            assertThat(e.getMessage(), containsString("updateurl is required"));
         }
     }
 
     @Test
     public void testJsonOutput() throws IOException {
         final File jsonFile = fileUtils.createTempFile(getTestMethodName(), ".json", null, true, false);
-        task.setUpdateUrl(TEST_URL);
-        task.setJsonFile(jsonFile);
+        task.setUpdateurl(TEST_URL);
+        task.setJsonfile(jsonFile);
         runTask();
         final String got = FileUtils.readFully(new FileReader(jsonFile));
         assertEquals("{'versionCode':3, 'updateURL':'http://example.com/update'}", got);
